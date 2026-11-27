@@ -1,1 +1,2 @@
+import "./page.css";
 import {FeaturePage} from "@/components/FeaturePage";export default function DepositManagement(){return <FeaturePage title="Deposit Management" description="Configure deposit channels and methods. Later each method will have its own logo URL and active status." items={["Channel One","Channel Two","Channel Three","bKash Logo URL","Nagad Logo URL","Rocket Logo URL","Upay Logo URL","CellPin Logo URL","USDT Logo URL"]}/>}
