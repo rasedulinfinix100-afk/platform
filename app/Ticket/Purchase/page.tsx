@@ -1,1 +1,2 @@
+import "./page.css";
 import {FeaturePage} from "@/components/FeaturePage";export default function TicketPurchasePage(){return <FeaturePage title="Lottery Guide" description="Explore sample lottery information and ticket formats." items={["Daily Draw Guide","Weekly Draw Guide","Ticket Information"]}/>}
