@@ -1,1 +1,2 @@
+import "./page.css";
 import {FeaturePage} from "@/components/FeaturePage";export default function AppSettings(){return <FeaturePage title="App Settings" description="Platform settings preview. Live configuration will be added only after backend authorization." items={["Default Language — English","Bengali Language","Brand Settings","Site Status"]}/>}
