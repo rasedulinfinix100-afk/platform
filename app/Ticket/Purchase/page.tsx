@@ -1,4 +1,4 @@
-import TicketChart from "@/app/TicketChart";
+import TicketChart from "@/app/Ticket/Chart";
 import {SiteShell} from "@/components/SiteShell";
 import "./page.css";
 
