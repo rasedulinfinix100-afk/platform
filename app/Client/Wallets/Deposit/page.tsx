@@ -2,17 +2,12 @@
 import {useEffect,useState,type FormEvent} from "react";
 import {SiteShell} from "@/components/SiteShell";
 import {PremiumIcon} from "@/components/PremiumIcon";
-import {depositChannels,depositMethods} from "@/lib/demo-config";
+import {cryptoDepositConfig,depositChannels,depositMethods} from "@/lib/demo-config";
 import "./deposit.css";
 
 const amounts=[100,500,5000,50000];
 const cryptoMethods=["USDT (BEP20)","USDT (TRC20)","USDT (ERC20)"] as const;
 type PaymentMode="fiat"|"crypto";
-const cryptoPaymentConfig:Record<(typeof cryptoMethods)[number],{walletAddress:string;qrImageUrl:string}>={
- "USDT (BEP20)":{walletAddress:"",qrImageUrl:""},
- "USDT (TRC20)":{walletAddress:"",qrImageUrl:""},
- "USDT (ERC20)":{walletAddress:"",qrImageUrl:""}
-};
 export default function DepositPage(){
  const [mode,setMode]=useState<PaymentMode>("fiat");
  const [channel,setChannel]=useState<string>("channel-one");
@@ -26,7 +21,7 @@ export default function DepositPage(){
  const [notice,setNotice]=useState("");
  const selectedChannel=depositChannels.find(c=>c.id===channel)?.name??"Channel One";
  const isCrypto=mode==="crypto";
- const cryptoConfig=isCrypto?cryptoPaymentConfig[method as (typeof cryptoMethods)[number]]:null;
+ const cryptoConfig=isCrypto?cryptoDepositConfig[method as keyof typeof cryptoDepositConfig]:null;
  const currency=isCrypto?"USDT":"BDT";
  const methods:readonly string[]=isCrypto?cryptoMethods:depositMethods.filter(m=>m!=="USDT");
  useEffect(()=>{if(!modal)return;const previous=document.body.style.overflow;document.body.style.overflow="hidden";const onKey=(event:KeyboardEvent)=>{if(event.key==="Escape")setModal(false)};window.addEventListener("keydown",onKey);return()=>{document.body.style.overflow=previous;window.removeEventListener("keydown",onKey)}},[modal]);
@@ -52,7 +47,7 @@ export default function DepositPage(){
    <div className="payment-instructions">
     <div className="wallet-section-title"><h2>{method} Payment Details</h2><span>{isCrypto?"Network transfer":selectedChannel}</span></div>
     <div className="payment-account-card"><div><small>{isCrypto?"OFFICIAL WALLET ADDRESS":"PAYMENT ACCOUNT / NUMBER"}</small><strong>{cryptoConfig?.walletAddress||"Will be configured by Admin"}</strong></div><span className="account-status">Pending setup</span></div>
-    <div className="payment-qr-placeholder">{cryptoConfig?.qrImageUrl?<img className="payment-qr-image" src={cryptoConfig.qrImageUrl} alt={`${method} deposit QR code`}/>:<><PremiumIcon name="qr-code" size={27}/><strong>{method} QR / Instruction Image</strong><span>{isCrypto?"A network-specific QR image can be configured for this method in Admin Settings.":"Admin can add the official payment QR image in payment settings."}</span></>}</div>
+    <div className="payment-qr-placeholder">{cryptoConfig?.qrImageUrl?<img className="payment-qr-image" src={cryptoConfig.qrImageUrl} alt={`${method} deposit QR code`}/>:<><PremiumIcon name="wallet" size={27}/><strong>{method} QR / Instruction Image</strong><span>{isCrypto?"A network-specific QR image can be configured for this method in Admin Settings.":"Admin can add the official payment QR image in payment settings."}</span></>}</div>
     <p className="payment-help">Only send funds using the exact payment method or network shown above. Double-check the destination details before transferring.</p>
    </div>
    <div className="manual-payment-fields">
