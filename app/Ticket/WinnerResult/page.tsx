@@ -1,0 +1,1 @@
+import {FeaturePage} from "@/components/FeaturePage";export default function WinnerResultPage(){return <FeaturePage title="Winner Results" description="Browse sample draw results and the result archive." items={["Sample Result 1427","Sample Result 8356","Sample Result 2710"]}/>}
