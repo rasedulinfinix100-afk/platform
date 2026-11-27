@@ -1,0 +1,1 @@
+import {FeaturePage} from "@/components/FeaturePage";export default function LoginPage(){return <FeaturePage title="Login" description="Sign in with your phone number. Demo screen; authentication is not connected yet." items={["Country code","Phone number","Continue"]}/>}
