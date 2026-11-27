@@ -1,0 +1,1 @@
+import {FeaturePage} from "@/components/FeaturePage";export default function TransactionsContent(){return <FeaturePage title="Transactions" description="Choose a transaction category to view its history." items={["Deposit","Withdrawal","Ticket Transaction"]}/>}
