@@ -1,1 +1,0 @@
-export default function Footer(){return <footer className="footer"><div className="shell"><strong>LottoFun</strong><p>Lottery information, sample results and community updates.</p><small>© 2026 LottoFun. Informational demo only.</small></div></footer>}
