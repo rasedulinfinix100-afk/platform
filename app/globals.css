@@ -86,3 +86,6 @@
  .page-wrap{width:min(100%,720px);padding:21px 13px 24px}
  .page-wrap .panel{padding:14px}
 }
+
+.page-wrap .deposit-heading{padding:16px;border-radius:14px}
+@media(max-width:480px){.page-wrap .deposit-heading{padding:13px;border-radius:12px}}
