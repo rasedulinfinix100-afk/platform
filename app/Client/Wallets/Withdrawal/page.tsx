@@ -1,0 +1,1 @@
+import {FeaturePage} from "@/components/FeaturePage";import "./withdrawal.css";export default function WithdrawalPage(){return <FeaturePage title="Withdrawal" description="Choose a withdrawal method. Instructions and status will be shown clearly before submission." items={["Bank","bKash","Nagad","Rocket","Upay","CellPin"]}/>}
