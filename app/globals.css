@@ -39,3 +39,10 @@
 @media(min-width:700px){
  .menu-drawer-panel{min-height:100dvh}
 }
+
+/* Clean menu list: no separate card or grid tiles for each destination */
+.menu-drawer-panel .drawer-links{display:flex;flex-direction:column;gap:0;border-top:1px solid #1b455c}
+.menu-drawer-panel .drawer-links a{min-height:57px;padding:0 5px;border:0;border-bottom:1px solid #1b455c;border-radius:0;background:transparent;font-size:14px}
+.menu-drawer-panel .drawer-icon{width:32px;height:32px;background:transparent;color:#31d0c8}
+.menu-drawer-panel .drawer-chevron{color:#7797a8}
+.menu-drawer-panel .drawer-language{margin-top:12px}
