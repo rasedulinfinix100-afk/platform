@@ -15,10 +15,12 @@ export default function DepositPage(){
  const [transactionId,setTransactionId]=useState("");
  const [proof,setProof]=useState<File|null>(null);
  const [modal,setModal]=useState(false);
+ const [verification,setVerification]=useState<"idle"|"checking"|"success">("idle");
  const [notice,setNotice]=useState("");
  const selectedChannel=depositChannels.find(c=>c.id===channel)?.name??"Channel One";
  useEffect(()=>{if(!modal)return;const previous=document.body.style.overflow;document.body.style.overflow="hidden";const onKey=(event:KeyboardEvent)=>{if(event.key==="Escape")setModal(false)};window.addEventListener("keydown",onKey);return()=>{document.body.style.overflow=previous;window.removeEventListener("keydown",onKey)}},[modal]);
- function openReview(event:FormEvent<HTMLFormElement>){event.preventDefault();setNotice("");setModal(true)}
+ function openReview(event:FormEvent<HTMLFormElement>){event.preventDefault();setNotice("");setVerification("checking")}
+ useEffect(()=>{if(verification==="idle")return;const timer=window.setTimeout(()=>{if(verification==="checking")setVerification("success");else{setVerification("idle");setModal(true)}},1700);return()=>window.clearTimeout(timer)},[verification]);
  function confirmDeposit(){setModal(false);setNotice("Demo preview only. Your deposit has not been sent or recorded because the payment backend is not connected yet.")}
  return <SiteShell>
   <section className="deposit-heading"><span className="eyebrow">WALLET</span><h1>Deposit</h1><p>Choose a payment method and enter your deposit details.</p></section>
@@ -42,8 +44,9 @@ export default function DepositPage(){
     <label className="payment-field"><span>Transaction ID</span><input type="text" value={transactionId} onChange={e=>setTransactionId(e.target.value)} placeholder="Enter transaction ID" required/></label>
     <label className="payment-field"><span>Payment Screenshot / Photo</span><input className="proof-file-input" type="file" accept="image/*" onChange={e=>setProof(e.target.files?.[0]??null)} required/><span className="proof-file-name">{proof?proof.name:"Upload payment screenshot (JPG, PNG)"}</span></label>
    </div>
-   <button className="deposit-review-button" type="submit">Deposit Via {method}<PremiumIcon name="chevron" size={19}/></button>
+   <button className="deposit-review-button" type="submit" disabled={verification!=="idle"}>Deposit Via {method}<PremiumIcon name="chevron" size={19}/></button>
   </form>
+  {verification!=="idle"&&<div className="transaction-verify-screen" role="status" aria-live="assertive"><div className={verification==="checking"?"verify-emblem is-spinning":"verify-emblem is-success"}>{verification==="checking"?<PremiumIcon name="transactions" size={31}/>:<svg viewBox="0 0 24 24" width="31" height="31" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m5 12 4 4L19 6"/></svg>}</div><strong>{verification==="checking"?"Verify Transaction":"Successfully Verify Transaction"}</strong><span>{verification==="checking"?"Checking your entered payment details...":"Your details are ready for final review."}</span><div className="verify-progress"><i/></div></div>}
   {notice&&<p className="deposit-demo-notice" role="status">{notice}</p>}
   {modal&&<div className="deposit-confirm-overlay" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setModal(false)}}><section className="deposit-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="deposit-confirm-title"><div className="confirm-modal-header"><span>DEPOSIT REVIEW</span><button type="button" onClick={()=>setModal(false)} aria-label="Close confirmation"><PremiumIcon name="close" size={23}/></button></div><h2 id="deposit-confirm-title">Confirm your deposit details</h2><p className="confirm-modal-subtitle">Review the information before the final confirmation.</p><div className="confirm-summary"><div><span>Payment Method</span><strong>{method}</strong></div><div><span>Deposit Channel</span><strong>{selectedChannel}</strong></div><div><span>Amount</span><strong>৳ {Number(amount||0).toLocaleString("en-US")}</strong></div><div><span>Sender Number</span><strong>{sender}</strong></div><div><span>Transaction ID</span><strong>{transactionId}</strong></div><div><span>Payment Photo</span><strong className="confirm-proof">{proof?.name??"Not attached"}</strong></div></div><div className="confirm-modal-actions"><button type="button" className="confirm-back-button" onClick={()=>setModal(false)}>Edit Details</button><button type="button" className="confirm-deposit-button" onClick={confirmDeposit}>Confirm Deposit</button></div><small className="confirm-demo-note">Demo interface: confirmation will not submit a real payment until backend integration is completed.</small></section></div>}
  </SiteShell>
