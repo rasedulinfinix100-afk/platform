@@ -1,0 +1,1 @@
+import {FeaturePage} from "@/components/FeaturePage";export default function Dashboard(){return <FeaturePage title="Dashboard" description="Overview of the platform. Sample metrics only." items={["Total Users — Sample","Deposit Requests — Sample","Withdrawal Requests — Sample","Ticket Activity — Sample"]}/>}
