@@ -1,1 +1,2 @@
+import "./page.css";
 import {FeaturePage} from "@/components/FeaturePage";export default function RegisterPage(){return <FeaturePage title="Create Account" description="Register using your phone number. Demo screen; authentication will be connected later." items={["Country code","Phone number","Full name","Create account"]}/>}
