@@ -8,3 +8,7 @@
 .auth-field input{ unicode-bidi:plaintext; }
 .auth-input-wrap input{padding-left:112px!important;padding-right:11px!important;text-align:left!important;direction:ltr;}
 .country-code{left:9px!important;right:auto!important;}
+
+/* Plain fields (name/password) start at the normal left inset; phone fields reserve prefix space */
+.auth-field>input{padding:0 11px!important;text-align:left!important;direction:ltr;}
+.auth-input-wrap>input{padding-left:112px!important;padding-right:11px!important;text-align:left!important;direction:ltr;}
