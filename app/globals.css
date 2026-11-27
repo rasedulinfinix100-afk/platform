@@ -89,3 +89,19 @@
 
 .page-wrap .deposit-heading{padding:16px;border-radius:14px}
 @media(max-width:480px){.page-wrap .deposit-heading{padding:13px;border-radius:12px}}
+
+/* Restore comfortable header and footer navigation scale */
+.site-header{height:68px}
+.menu-trigger{width:44px;height:44px}
+.bottom-nav{min-height:72px;padding:10px 6px calc(10px + env(safe-area-inset-bottom))}
+.bottom-nav a{min-width:58px;gap:5px;font-size:10px}
+.bottom-nav a svg{width:25px!important;height:25px!important}
+.header-balance{height:38px;font-size:10px}
+@media(max-width:480px){
+ .site-header{height:64px;padding:0 14px}
+ .menu-trigger{width:43px;height:43px}
+ .header-balance{height:36px;font-size:9.6px}
+ .bottom-nav{min-height:70px;padding:9px 5px calc(9px + env(safe-area-inset-bottom))}
+ .bottom-nav a{min-width:54px;gap:4px;font-size:9.6px}
+ .bottom-nav a svg{width:24px!important;height:24px!important}
+}
