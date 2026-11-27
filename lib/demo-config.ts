@@ -3,3 +3,9 @@ export const depositMethods=["bKash","Nagad","Rocket","Upay","CellPin","USDT"] a
 export const withdrawalMethods=["Bank","bKash","Nagad","Rocket","Upay","CellPin"] as const;
 export const transactionTabs=["Deposit","Withdrawal","Ticket Transaction"] as const;
 export const languages=["English","বাংলা"] as const;
+
+export const cryptoDepositConfig={
+ "USDT (BEP20)":{walletAddress:"",qrImageUrl:""},
+ "USDT (TRC20)":{walletAddress:"",qrImageUrl:""},
+ "USDT (ERC20)":{walletAddress:"",qrImageUrl:""}
+} as const;
