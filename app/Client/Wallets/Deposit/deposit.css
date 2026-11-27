@@ -58,3 +58,18 @@
 .deposit-review-button,.confirm-deposit-button{background:var(--lotto-primary-gradient,linear-gradient(100deg,#13bcb5,#08a99f));color:#fff}
 .confirm-back-button{background:var(--lotto-control,#0b263a);border:1px solid var(--lotto-border,#1b455c);color:var(--lotto-text,#f4f8fc)}
 @media(max-width:390px){.deposit-mode-switch{gap:6px;margin-bottom:14px}.deposit-mode-tab{min-height:40px}}
+
+/* Latest compact selection and fiat-number-only payment details */
+.deposit-mode-tab,.deposit-mode-tab.active{border:1px solid transparent!important;box-shadow:none!important}
+.deposit-mode-tab.active{background:#0b3b4a!important;color:#f4f8fc!important}
+.deposit-method{min-height:100px;padding:9px 7px;gap:8px;border:1px solid #1b455c!important}
+.deposit-method.selected{border:1px solid #1b455c!important;background:linear-gradient(145deg,#102d40,#0a2032)!important;box-shadow:none!important}
+.deposit-method .payment-logo{height:43px}
+.method-select-mark{background:transparent!important;color:transparent!important;border:0!important}
+.deposit-method.selected .method-select-mark{background:#12c7bd!important;color:#03232a!important}
+.fiat-payment-number{min-height:52px;display:flex;align-items:center;justify-content:center;padding:12px 14px;border:1px solid #244c61;border-radius:10px;background:#061a2b}
+.fiat-payment-number strong{font-size:15px;font-weight:800;letter-spacing:.035em;color:#f4f8fc;text-align:center;overflow-wrap:anywhere}
+.transaction-id-hint{color:#91aebe;font-size:9px;font-weight:500}
+.payment-instructions:has(.fiat-payment-number){gap:10px}
+@media(max-width:390px){.deposit-method{min-height:89px;padding:7px 5px;gap:7px}.deposit-method .payment-logo{height:38px}.deposit-method>strong{font-size:10px}}
+@media(min-width:700px){.deposit-method{min-height:112px}.deposit-method .payment-logo{height:49px}}
