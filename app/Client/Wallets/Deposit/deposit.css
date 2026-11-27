@@ -43,3 +43,18 @@
 .confirm-demo-note{margin:14px auto 0;max-width:340px;font-size:9px;color:#91a8b6}
 @media(min-width:700px){.deposit-confirm-overlay{align-items:center;padding:20px}.deposit-confirm-modal{height:auto;min-height:min(720px,92dvh);max-height:92dvh;border:1px solid #294b60;border-radius:18px;padding:24px;}}
 @media(prefers-reduced-motion:reduce){.verify-emblem.is-spinning,.verify-progress i{animation:none}.transaction-verify-screen,.verify-emblem.is-success{animation:none}}
+
+/* Deposit type switch and consistent shared payment controls */
+.deposit-mode-switch{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:2px 0 17px;padding:5px;border:1px solid var(--lotto-border,#1b455c);border-radius:13px;background:var(--lotto-surface,#081d2d)}
+.deposit-mode-tab{min-height:43px;border:1px solid transparent;border-radius:9px;background:var(--lotto-control,#0b263a);color:var(--lotto-muted,#a9bdca);font-size:12px;font-weight:800;transition:background .16s,border-color .16s,color .16s}
+.deposit-mode-tab.active{border-color:var(--lotto-teal,#12c7bd);background:var(--lotto-selected,#0b3b4a);color:#f4f8fc;box-shadow:inset 0 0 0 1px #12c7bd22}
+.payment-qr-image{display:block;width:min(100%,210px);aspect-ratio:1;object-fit:contain;padding:9px;border:1px solid #294b60;border-radius:10px;background:#fff}
+.payment-qr-placeholder:has(.payment-qr-image){min-height:0;padding:12px;background:#071b2b}
+.payment-qr-placeholder .payment-qr-image+strong{color:#e8f2f7}
+.payment-qr-placeholder .payment-qr-image+strong+span{color:#92acbb}
+.deposit-method-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.deposit-method,.channel,.quick-amount,.deposit-mode-tab,.confirm-back-button{background-color:var(--lotto-control,#0b263a);color:var(--lotto-text,#f4f8fc);border-color:var(--lotto-border,#1b455c)}
+.deposit-method.selected,.channel.active,.quick-amount.active,.deposit-mode-tab.active{background:var(--lotto-selected,#0b3b4a);border-color:var(--lotto-teal,#12c7bd);color:#f4f8fc}
+.deposit-review-button,.confirm-deposit-button{background:var(--lotto-primary-gradient,linear-gradient(100deg,#13bcb5,#08a99f));color:#fff}
+.confirm-back-button{background:var(--lotto-control,#0b263a);border:1px solid var(--lotto-border,#1b455c);color:var(--lotto-text,#f4f8fc)}
+@media(max-width:390px){.deposit-mode-switch{gap:6px;margin-bottom:14px}.deposit-mode-tab{min-height:40px}}
