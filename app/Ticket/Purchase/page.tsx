@@ -1,2 +1,7 @@
+import TicketChart from "@/app/TicketChart";
+import {SiteShell} from "@/components/SiteShell";
 import "./page.css";
-import {FeaturePage} from "@/components/FeaturePage";export default function TicketPurchasePage(){return <FeaturePage title="Lottery Guide" description="Explore sample lottery information and ticket formats." items={["Daily Draw Guide","Weekly Draw Guide","Ticket Information"]}/>}
+
+export default function TicketPurchasePage(){
+  return <SiteShell><TicketChart /></SiteShell>;
+}
