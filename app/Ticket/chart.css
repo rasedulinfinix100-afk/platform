@@ -2,26 +2,144 @@
   display: block;
   width: 100%;
   min-width: 0;
+  padding: 8px 0 24px;
 }
 
 .ticket-chart-list {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
   min-width: 0;
   margin: 0;
   padding: 0;
 }
 
-.ticket-chart-image {
-  display: block;
+.ticket-chart-card {
+  position: relative;
   width: 100%;
-  max-width: 100%;
-  height: auto;
-  object-fit: contain;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
+  min-width: 0;
+  overflow: hidden;
+  aspect-ratio: 3 / 1;
+  border-radius: 10px;
+  background: #06172d;
+  isolation: isolate;
+}
+
+.ticket-chart-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("/platform/images/ticket-banners.avif");
+  background-repeat: no-repeat;
+  background-size: 100% 500%;
+  background-position-x: center;
+}
+
+.ticket-countdown {
+  position: absolute;
+  z-index: 2;
+  right: 3.4%;
+  bottom: 8.5%;
+  width: 33.5%;
+  height: 25.5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(1px, 0.35vw, 5px);
+  padding: 0.6% 1.2%;
+  color: #fff;
+  text-align: center;
+  pointer-events: none;
+}
+
+.ticket-countdown-heading {
+  font-size: clamp(6px, 1.05vw, 15px);
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: 0.045em;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.9);
+}
+
+.ticket-countdown-units {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(2px, 0.5vw, 7px);
+  min-height: 0;
+}
+
+.ticket-countdown-unit {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  border: 1px solid rgba(255, 220, 125, 0.72);
+  border-radius: 5px;
+  background: rgba(2, 10, 25, 0.58);
+  box-shadow: inset 0 0 8px rgba(255, 194, 65, 0.12);
+  text-shadow: 0 1px 4px #000;
+}
+
+.ticket-countdown-unit strong {
+  font-size: clamp(8px, 1.45vw, 20px);
+  line-height: 1;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.ticket-countdown-unit span {
+  font-size: clamp(4px, 0.62vw, 9px);
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.ticket-chart-note {
+  margin: 12px 8px 0;
+  color: #8b9bb2;
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .ticket-chart-list {
+    gap: 7px;
+  }
+
+  .ticket-chart-card {
+    border-radius: 7px;
+  }
+
+  .ticket-countdown {
+    right: 3.1%;
+    bottom: 8%;
+    width: 34%;
+    height: 27%;
+    padding: 0.5% 1%;
+  }
+
+  .ticket-countdown-heading {
+    font-size: clamp(5px, 1.7vw, 8px);
+  }
+
+  .ticket-countdown-unit {
+    border-radius: 3px;
+  }
+
+  .ticket-countdown-unit strong {
+    font-size: clamp(7px, 2.2vw, 10px);
+  }
+
+  .ticket-countdown-unit span {
+    font-size: clamp(3px, 1.15vw, 5px);
+  }
+
+  .ticket-chart-note {
+    font-size: 11px;
+  }
 }
