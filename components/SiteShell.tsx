@@ -1,0 +1,3 @@
+import Link from "next/link";
+import { LanguageSwitcher } from "./LanguageSwitcher";
+export function SiteShell({children}:{children:React.ReactNode}){return <div className="site-shell"><header className="site-header"><Link href="/" className="brand"><span className="brand-mark">♛</span>Lotto</Link><LanguageSwitcher/></header><main className="page-wrap">{children}</main><nav className="bottom-nav" aria-label="Main navigation"><Link href="/"><span>⌂</span>Home</Link><Link href="/Ticket/Purchase/"><span>♧</span>Lottery</Link><Link href="/Ticket/WinnerResult/"><span>🏆</span>Results</Link><Link href="/m/UserProfiles/"><span>●</span>Profile</Link><Link href="/Client/Auth/Transactions/"><span>▤</span>Transactions</Link></nav></div>}
