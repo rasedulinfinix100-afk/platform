@@ -9,3 +9,10 @@ export const cryptoDepositConfig={
  "USDT (TRC20)":{walletAddress:"",qrImageUrl:""},
  "USDT (ERC20)":{walletAddress:"",qrImageUrl:""}
 } as const;
+
+export const fiatPaymentAccounts:Record<string,Record<string,string>>={
+ "channel-one":{"bKash":"","Nagad":"","Rocket":"","Upay":"","CellPin":""},
+ "channel-two":{"bKash":"","Nagad":"","Rocket":"","Upay":"","CellPin":""},
+ "channel-three":{"bKash":"","Nagad":"","Rocket":"","Upay":"","CellPin":""}
+};
+export const fiatWithdrawalChannels=[{id:"channel-one",name:"Channel One"},{id:"channel-two",name:"Channel Two"},{id:"channel-three",name:"Channel Three"}] as const;
