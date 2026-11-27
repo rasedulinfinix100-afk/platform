@@ -1,0 +1,1 @@
+export default function Footer(){return <footer className="footer"><div className="shell"><strong>লটারি তথ্য — বাংলাদেশ</strong><p>তথ্য ও নমুনা ফলাফল প্রদর্শনের পোর্টাল। এখানে টিকিট বিক্রি বা অর্থ লেনদেন হয় না।</p><small>© ২০২৬ লটারি তথ্য। সর্বস্বত্ব সংরক্ষিত।</small></div></footer>}

@@ -1,0 +1,3 @@
+"use client";
+import Link from "next/link";
+export default function Header(){return <><header className="topbar"><div className="shell" style={{display:"flex",alignItems:"center",justifyContent:"space-between",width:"100%"}}><Link href="/" className="brand"><span className="brandmark">✦</span> লটারি তথ্য</Link><nav className="nav"><Link href="/">হোম</Link><Link href="/results/">ফলাফল</Link><Link href="/profile/">প্রোফাইল</Link><Link href="/login/" className="btn">লগইন</Link></nav></div></header><nav className="mobile-nav"><Link href="/">হোম</Link><Link href="/results/">ফলাফল</Link><Link href="/profile/">প্রোফাইল</Link><Link href="/login/">লগইন</Link></nav></>}
