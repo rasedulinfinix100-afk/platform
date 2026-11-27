@@ -2,3 +2,9 @@
 /* Bangladesh country prefix is displayed at the left of the phone field */
 .auth-field input{padding-left:82px;padding-right:11px}
 .country-code{left:9px;right:auto;border-left:0;border-right:1px solid #244b60;padding:5px 9px 5px 5px}
+
+/* Keep typed text and placeholders aligned from the left edge */
+.auth-field input,.auth-field input::placeholder{ text-align:left!important; direction:ltr; }
+.auth-field input{ unicode-bidi:plaintext; }
+.auth-input-wrap input{padding-left:112px!important;padding-right:11px!important;text-align:left!important;direction:ltr;}
+.country-code{left:9px!important;right:auto!important;}
