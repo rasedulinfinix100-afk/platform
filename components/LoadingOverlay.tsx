@@ -1,0 +1,4 @@
+"use client";
+import { useEffect, useState } from "react";
+import "./loading-overlay.css";
+export function LoadingOverlay() { const [visible,setVisible]=useState(true); useEffect(()=>{ document.cookie="lotto_loader_session=started; path=/; SameSite=Lax"; const timer=window.setTimeout(()=>setVisible(false),4500); return ()=>window.clearTimeout(timer); },[]); if(!visible)return null; return <div className="lotto-loader" role="status" aria-label="Loading Lotto"><div className="loader-brand">♛ <span>LOTTO</span></div><div className="loader-orbit"><i className="loader-ball ball-one">7</i><i className="loader-ball ball-two">3</i><i className="loader-ball ball-three">9</i><i className="loader-ball ball-four">5</i><div className="loader-core">♛</div></div><strong>Preparing your experience</strong><span className="loader-caption">Please wait a moment...</span></div>; }
