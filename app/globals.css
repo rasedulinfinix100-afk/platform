@@ -105,3 +105,46 @@
  .bottom-nav a{min-width:54px;gap:4px;font-size:9.6px}
  .bottom-nav a svg{width:24px!important;height:24px!important}
 }
+
+/* Lotto-wide component color contract: shared CTA, secondary, and selectable-card colors */
+:root{
+ --lotto-action-bg:linear-gradient(100deg,#13bcb5,#08a99f);
+ --lotto-action-text:#ffffff;
+ --lotto-control-bg:#0b263a;
+ --lotto-control-active:#0b3b4a;
+ --lotto-card-bg:linear-gradient(145deg,#102d40,#0a2032);
+ --lotto-card-selected:linear-gradient(145deg,#104253,#0b2b40);
+ --lotto-control-border:#1b455c;
+ --lotto-control-border-active:#12c7bd;
+}
+:is(.primary-button,.gold-button,.auth-submit,.deposit-review-button,.confirm-deposit-button,.withdrawal-submit,.admin-submit,.save-button,.submit-button){
+ background:var(--lotto-action-bg)!important;
+ color:var(--lotto-action-text)!important;
+ border-color:transparent!important;
+}
+:is(.language-switch,.channel,.quick-amount,.deposit-mode-tab,.confirm-back-button,.menu-trigger,.menu-close){
+ background:var(--lotto-control-bg)!important;
+ color:var(--lotto-text,#f4f8fc)!important;
+ border:1px solid var(--lotto-control-border)!important;
+}
+:is(.channel.active,.quick-amount.active,.deposit-mode-tab.active){
+ background:var(--lotto-control-active)!important;
+ color:#ffffff!important;
+ border:1px solid var(--lotto-control-border-active)!important;
+}
+:is(.deposit-method,.withdrawal-method,.transactions-quick-actions a,.transaction-actions a,.route-actions a){
+ background:var(--lotto-card-bg)!important;
+ color:var(--lotto-text,#f4f8fc)!important;
+ border-color:var(--lotto-control-border)!important;
+}
+:is(.deposit-method.selected,.withdrawal-method.selected){
+ background:var(--lotto-card-selected)!important;
+ border:2px solid var(--lotto-control-border-active)!important;
+}
+:is(.transactions-quick-actions a:active,.transaction-actions a:active,.route-actions a:active){
+ border-color:var(--lotto-control-border-active)!important;
+ background:var(--lotto-control-active)!important;
+}
+:is(.admin-method,.payment-instructions,.manual-payment-fields,.withdrawal-form){
+ border-color:var(--lotto-control-border);
+}
