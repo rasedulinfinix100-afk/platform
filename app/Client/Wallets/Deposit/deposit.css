@@ -5,3 +5,41 @@
 .deposit-confirm-overlay{position:fixed;inset:0;z-index:20000;display:flex;align-items:stretch;justify-content:stretch;overflow-y:auto;padding:0;background:rgba(1,9,16,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}.deposit-confirm-modal{width:100%;height:100dvh;min-height:100dvh;max-height:100dvh;overflow-y:auto;padding:calc(18px + env(safe-area-inset-top)) 17px calc(18px + env(safe-area-inset-bottom));border:0;border-radius:0;background:linear-gradient(145deg,#0c2b40,#061827);box-shadow:0 22px 70px #0009}.confirm-modal-header{display:flex;align-items:center;justify-content:space-between;color:#41d6cb;font-size:9px;font-weight:850;letter-spacing:.14em}.confirm-modal-header button{width:33px;height:33px;display:grid;place-items:center;border:1px solid #254d62;border-radius:50%;background:#0a2639;color:#eaf4f8}.deposit-confirm-modal h2{margin:9px 0 5px;font-size:18px;letter-spacing:-.03em}.confirm-modal-subtitle{margin:0 0 13px;color:#9eb5c3;font-size:10px}.confirm-summary{display:grid;gap:0;border:1px solid #20495e;border-radius:12px;overflow:hidden}.confirm-summary>div{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:10px 11px;border-bottom:1px solid #1a3b50;background:#091f31}.confirm-summary>div:last-child{border-bottom:0}.confirm-summary span{color:#91aebe;font-size:10px}.confirm-summary strong{max-width:62%;color:#f1f6f9;font-size:10px;text-align:right;overflow-wrap:anywhere}.confirm-summary>div:nth-child(3) strong{color:#45d7ae;font-size:13px}.confirm-modal-actions{display:grid;grid-template-columns:1fr 1.25fr;gap:8px;margin-top:14px}.confirm-back-button,.confirm-deposit-button{min-height:43px;border-radius:10px;font-size:10px;font-weight:800}.confirm-back-button{border:1px solid #31566a;background:#102d40;color:#dce9ef}.confirm-deposit-button{border:0;background:linear-gradient(100deg,#13bcb5,#08a99f);color:white}.confirm-demo-note{display:block;margin-top:11px;color:#8da8b7;font-size:8px;line-height:1.45;text-align:center}
 @media(max-width:390px){.deposit-method-grid{gap:7px}.deposit-method{min-height:99px;padding:8px 5px;border-radius:12px}.payment-logo{height:42px;font-size:15px}.deposit-method>strong{font-size:10px}.method-select-mark{width:17px;height:17px;font-size:10px}.quick-amount{font-size:10px;min-height:45px}.deposit-form{gap:11px}.payment-instructions,.manual-payment-fields{padding:11px}.deposit-confirm-modal{padding:14px}}
 @media(min-width:700px){.deposit-method{min-height:125px}.payment-logo{height:55px}.deposit-form{gap:15px}}
+
+/* Two-stage transaction verification screen */
+.transaction-verify-screen{position:fixed;inset:0;z-index:25000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;padding:24px;background:radial-gradient(ellipse at 50% 42%,#123d55 0%,#071d30 48%,#020d18 100%);color:#f3f8fb;text-align:center;animation:verify-screen-in .2s ease-out}
+.verify-emblem{width:58px;height:58px;display:grid;place-items:center;border:1px solid #28738a;border-radius:18px;background:linear-gradient(145deg,#123d54,#0a263b);color:#42d5cb;box-shadow:0 12px 32px #0005}
+.verify-emblem.is-spinning{animation:verify-rotate 1.1s linear infinite}
+.verify-emblem.is-success{border-color:#31c88d;background:linear-gradient(145deg,#104936,#0a302d);color:#57e2a6;animation:verify-pop .3s ease-out}
+.transaction-verify-screen>strong{font-size:17px;font-weight:800;letter-spacing:-.025em}
+.transaction-verify-screen>span{max-width:270px;color:#a9c2cf;font-size:11px;line-height:1.5}
+.verify-progress{width:145px;height:3px;margin-top:7px;overflow:hidden;border-radius:10px;background:#18384c}
+.verify-progress i{display:block;width:38%;height:100%;border-radius:10px;background:#26cbbf;animation:verify-progress 1.7s ease-in-out infinite}
+.is-success~.verify-progress i{width:100%;animation:none}
+@keyframes verify-rotate{to{transform:rotate(360deg)}}
+@keyframes verify-pop{0%{transform:scale(.75);opacity:.5}100%{transform:scale(1);opacity:1}}
+@keyframes verify-progress{0%{transform:translateX(-110%)}100%{transform:translateX(380%)}}
+@keyframes verify-screen-in{from{opacity:0}to{opacity:1}}
+/* Bank-grade transaction review */
+.deposit-confirm-overlay{align-items:stretch;justify-content:center;background:rgba(1,8,15,.97)}
+.deposit-confirm-modal{position:relative;width:100%;max-width:620px;margin:0 auto;padding:calc(20px + env(safe-area-inset-top)) 18px calc(22px + env(safe-area-inset-bottom));background:linear-gradient(160deg,#0b2639 0%,#071a2a 52%,#061522 100%);border-left:1px solid #21465b;border-right:1px solid #21465b;box-shadow:0 0 55px #0008}
+.confirm-modal-header{padding-bottom:13px;border-bottom:1px solid #25485c;color:#c8d8e2;font-size:9px;letter-spacing:.16em}
+.confirm-modal-header:before{content:"";width:29px;height:29px;margin-right:8px;border:1px solid #b68d43;border-radius:8px;background:linear-gradient(145deg,#f2cd78,#b9822c);box-shadow:inset 0 0 0 4px #0b2a3b}
+.confirm-modal-header button{margin-left:auto}
+.deposit-confirm-modal h2{margin:20px 0 5px;font-size:20px;letter-spacing:-.035em}
+.confirm-modal-subtitle{margin-bottom:18px;font-size:11px}
+.confirm-summary{border:1px solid #294b60;border-radius:14px;background:#081d2d}
+.confirm-summary>div{min-height:48px;align-items:center;padding:12px 14px;background:transparent;border-bottom:1px solid #1c3b50}
+.confirm-summary>div span{font-size:10px;color:#9bb2c0;letter-spacing:.025em}
+.confirm-summary>div strong{font-size:11px;font-weight:700;color:#edf4f8}
+.confirm-summary>div:nth-child(3){min-height:70px;background:linear-gradient(100deg,#102f42,#0b2638);border-bottom:1px solid #31566a}
+.confirm-summary>div:nth-child(3) span{color:#c1d2dc;font-size:11px}
+.confirm-summary>div:nth-child(3) strong{font-size:20px;color:#f0c66e;letter-spacing:-.03em}
+.confirm-proof{max-width:60%;overflow-wrap:anywhere}
+.confirm-modal-actions{grid-template-columns:1fr 1.3fr;gap:10px;margin-top:18px}
+.confirm-back-button,.confirm-deposit-button{min-height:49px;border-radius:10px;font-size:11px;letter-spacing:.01em}
+.confirm-back-button{border:1px solid #36566a;background:#102a3c;color:#d8e5ed}
+.confirm-deposit-button{background:linear-gradient(100deg,#c99a43,#e2bb68);color:#102334;box-shadow:0 5px 16px #0003}
+.confirm-demo-note{margin:14px auto 0;max-width:340px;font-size:9px;color:#91a8b6}
+@media(min-width:700px){.deposit-confirm-overlay{align-items:center;padding:20px}.deposit-confirm-modal{height:auto;min-height:min(720px,92dvh);max-height:92dvh;border:1px solid #294b60;border-radius:18px;padding:24px;}}
+@media(prefers-reduced-motion:reduce){.verify-emblem.is-spinning,.verify-progress i{animation:none}.transaction-verify-screen,.verify-emblem.is-success{animation:none}}
