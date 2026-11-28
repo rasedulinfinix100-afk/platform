@@ -85,7 +85,9 @@ export function AuthProvider({children}:{children:React.ReactNode}){
     refreshTimer.current=setTimeout(async()=>{
       try{
         const next=await refreshSession(session);
-        const stored=saveSession(next,readSession()?.user??user!);
+        const currentUser=readSession()?.user;
+        if(!currentUser){clearLocalSession();return;}
+        const stored=saveSession(next,currentUser);
         sessionRef.current=stored.session;
         setUser(stored.user);
         scheduleRefresh(stored.session);
@@ -93,7 +95,7 @@ export function AuthProvider({children}:{children:React.ReactNode}){
         clearLocalSession();
       }
     },Math.min(delay,2147483000));
-  },[clearLocalSession,user]);
+  },[clearLocalSession]);
 
   const establishSession=useCallback((session:AuthSession,nextUser:AuthUser)=>{
     const stored=saveSession(session,nextUser);
