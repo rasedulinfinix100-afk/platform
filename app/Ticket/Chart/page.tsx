@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { SiteShell } from "@/components/SiteShell";
-import "./chart.css";
+import "../chart.css";
 
 const TEST_DRAW_AT = new Date("2026-12-05T20:00:00+06:00").getTime();
 
