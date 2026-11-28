@@ -52,7 +52,7 @@ async function authRequest(action:string,accessToken?:string){
 }
 function isInvalidSessionError(error:unknown){
   const message=error instanceof Error?error.message:String(error??"");
-  return /invalid.*refresh|refresh.*(expired|not found|invalid)|session.*(expired|invalid)|invalid token/i.test(message);
+  return /(invalid|expired).*(refresh|session|token)|(refresh|session|token).*(expired|not found|invalid)/i.test(message);
 }
 async function coordinatedRefresh(session:AuthSession):Promise<AuthSession>{
   if(typeof navigator!=="undefined"&&navigator.locks){
