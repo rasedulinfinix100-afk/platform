@@ -1,7 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { SiteShell } from "@/components/SiteShell";
 import "./page.css";
 
@@ -14,9 +13,12 @@ const SOLD_NUMBERS: number[] = [];
 const TICKET_PRICES = [10, 20, 50, 100, 200, 500, 1000];
 
 export default function TicketPurchasePage() {
-  const searchParams = useSearchParams();
-  const requestedPrice = Number(searchParams.get("price"));
-  const ticketPrice = TICKET_PRICES.includes(requestedPrice) ? requestedPrice : 10;
+  const [ticketPrice, setTicketPrice] = useState(10);
+
+  useEffect(() => {
+    const requestedPrice = Number(new URLSearchParams(window.location.search).get("price"));
+    if (TICKET_PRICES.includes(requestedPrice)) setTicketPrice(requestedPrice);
+  }, []);
 
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [selectionMode, setSelectionMode] = useState<"manual" | "auto">("manual");
@@ -40,16 +42,15 @@ export default function TicketPurchasePage() {
     setSelectionMode("manual");
     setMessage("");
 
-    setSelectedNumbers((current) => {
-      if (current.includes(number)) {
-        return current.filter((item) => item !== number);
-      }
-      if (current.length >= REQUIRED_NUMBERS) {
-        showMessage("আপনি সর্বোচ্চ ১৬টি নম্বর নির্বাচন করতে পারবেন।", "error");
-        return current;
-      }
-      return [...current, number].sort((a, b) => a - b);
-    });
+    if (selectedSet.has(number)) {
+      setSelectedNumbers((current) => current.filter((item) => item !== number));
+      return;
+    }
+    if (selectedNumbers.length >= REQUIRED_NUMBERS) {
+      showMessage("আপনি সর্বোচ্চ ১৬টি নম্বর নির্বাচন করতে পারবেন।", "error");
+      return;
+    }
+    setSelectedNumbers((current) => [...current, number].sort((a, b) => a - b));
   }
 
   function selectAutoNumbers() {
