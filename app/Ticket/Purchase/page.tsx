@@ -2,31 +2,54 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { SiteShell } from "@/components/SiteShell";
+import { useLanguage } from "@/components/LanguageProvider";
 import "./page.css";
 
-const REQUIRED_NUMBERS = 16;
+const REQUIRED_NUMBERS = 11;
 const ALL_NUMBERS = Array.from({ length: 72 }, (_, index) => index + 1);
 
-// Frontend demo: this list will be replaced by Supabase availability data later.
+// Demo only. Supabase will provide the live sold-number list.
 const SOLD_NUMBERS: number[] = [];
 
-const TICKET_PRICES = [10, 20, 50, 100, 200, 500, 1000];
+const TICKET_PRIZES: Record<number, number> = {
+  10: 100000,
+  20: 200000,
+  50: 500000,
+  100: 1000000,
+  200: 2000000,
+  500: 5000000,
+  1000: 10000000,
+};
+
+type LoaderPhase = "checking" | "success" | "ready";
 
 export default function TicketPurchasePage() {
+  const { language, t } = useLanguage();
   const [ticketPrice, setTicketPrice] = useState(10);
-
-  useEffect(() => {
-    const requestedPrice = Number(new URLSearchParams(window.location.search).get("price"));
-    if (TICKET_PRICES.includes(requestedPrice)) setTicketPrice(requestedPrice);
-  }, []);
-
+  const [loaderPhase, setLoaderPhase] = useState<LoaderPhase>("checking");
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [selectionMode, setSelectionMode] = useState<"manual" | "auto">("manual");
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"error" | "success" | "info">("info");
 
+  useEffect(() => {
+    const requestedPrice = Number(new URLSearchParams(window.location.search).get("price"));
+    if (TICKET_PRIZES[requestedPrice]) setTicketPrice(requestedPrice);
+  }, []);
+
+  useEffect(() => {
+    const successTimer = window.setTimeout(() => setLoaderPhase("success"), 2100);
+    const readyTimer = window.setTimeout(() => setLoaderPhase("ready"), 4000);
+    return () => {
+      window.clearTimeout(successTimer);
+      window.clearTimeout(readyTimer);
+    };
+  }, []);
+
   const soldSet = useMemo(() => new Set(SOLD_NUMBERS), []);
   const selectedSet = useMemo(() => new Set(selectedNumbers), [selectedNumbers]);
+  const jackpot = TICKET_PRIZES[ticketPrice] ?? TICKET_PRIZES[10];
+  const formattedJackpot = new Intl.NumberFormat(language === "bn" ? "bn-BD" : "en-BD").format(jackpot);
 
   function showMessage(text: string, type: "error" | "success" | "info" = "info") {
     setMessage(text);
@@ -35,7 +58,7 @@ export default function TicketPurchasePage() {
 
   function toggleNumber(number: number) {
     if (soldSet.has(number)) {
-      showMessage("This Ticket Number Sold", "error");
+      showMessage(t("soldTicket"), "error");
       return;
     }
 
@@ -47,7 +70,7 @@ export default function TicketPurchasePage() {
       return;
     }
     if (selectedNumbers.length >= REQUIRED_NUMBERS) {
-      showMessage("আপনি সর্বোচ্চ ১৬টি নম্বর নির্বাচন করতে পারবেন।", "error");
+      showMessage(t("maxEleven"), "error");
       return;
     }
     setSelectedNumbers((current) => [...current, number].sort((a, b) => a - b));
@@ -56,7 +79,7 @@ export default function TicketPurchasePage() {
   function selectAutoNumbers() {
     const available = ALL_NUMBERS.filter((number) => !soldSet.has(number));
     if (available.length < REQUIRED_NUMBERS) {
-      showMessage("এই মুহূর্তে ১৬টি নম্বর পাওয়া যাচ্ছে না।", "error");
+      showMessage(t("notEnoughNumbers"), "error");
       return;
     }
 
@@ -68,50 +91,56 @@ export default function TicketPurchasePage() {
 
     setSelectedNumbers(shuffled.slice(0, REQUIRED_NUMBERS).sort((a, b) => a - b));
     setSelectionMode("auto");
-    showMessage("অটো পদ্ধতিতে ১৬টি নম্বর নির্বাচন করা হয়েছে।", "success");
+    showMessage(t("autoEleven"), "success");
   }
 
   function clearSelection() {
     setSelectedNumbers([]);
     setSelectionMode("manual");
-    showMessage("নির্বাচিত নম্বর মুছে ফেলা হয়েছে।", "info");
+    showMessage(t("clearDone"), "info");
   }
 
   function continuePurchase() {
     if (selectedNumbers.length !== REQUIRED_NUMBERS) {
-      showMessage("চালিয়ে যেতে ঠিক ১৬টি নম্বর নির্বাচন করুন।", "error");
+      showMessage(t("selectExactlyEleven"), "error");
       return;
     }
-    showMessage("নম্বর নির্বাচন সম্পন্ন। পেমেন্ট ব্যবস্থা Supabase যুক্ত হলে চালু হবে।", "success");
+    showMessage(t("purchaseDemo"), "success");
+  }
+
+  if (loaderPhase !== "ready") {
+    return (
+      <div className={`ticket-auth-loader ${loaderPhase === "success" ? "is-success" : ""}`} role="status" aria-live="polite">
+        {loaderPhase === "checking" ? (
+          <>
+            <div className="ticket-auth-mark" aria-hidden="true"><span /></div>
+            <div className="ticket-auth-copy">
+              <strong>{t("checkingTicketAuth")}</strong>
+              <span className="ticket-auth-dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="ticket-auth-success-icon" aria-hidden="true">✓</div>
+            <strong>{t("ticketAuthSuccess")} <span>✓</span></strong>
+          </>
+        )}
+      </div>
+    );
   }
 
   return (
     <SiteShell>
       <main className="purchase-page">
-        <header className="purchase-heading">
-          <span className="purchase-eyebrow">LOTTO • TICKET PURCHASE</span>
-          <h1>আপনার টিকিট নম্বর বেছে নিন</h1>
-          <p>১ থেকে ৭২-এর মধ্যে ঠিক ১৬টি নম্বর নির্বাচন করুন।</p>
-        </header>
-
-        <section className="purchase-ticket-info" aria-label="টিকিটের তথ্য">
-          <div>
-            <span>টিকিটের মূল্য</span>
-            <strong>৳{ticketPrice.toLocaleString("en-BD")}</strong>
-          </div>
-          <div className="purchase-count">
-            <span>নির্বাচিত নম্বর</span>
-            <strong>{selectedNumbers.length}<small> / ১৬</small></strong>
-          </div>
+        <section className="purchase-jackpot" aria-label={t("jackpot")}>
+          <span>{t("jackpot")}</span>
+          <strong>৳{formattedJackpot}</strong>
         </section>
 
         <section className="number-selection-panel">
           <div className="number-panel-top">
-            <div>
-              <h2>নম্বর নির্বাচন</h2>
-              <p>হলুদ রঙে নির্বাচিত নম্বর দেখানো হবে</p>
-            </div>
-            <span className="number-range">০১ — ৭২</span>
+            <h2>{t("numberSelection")}</h2>
+            <span className="number-range">01 — 72</span>
           </div>
 
           <div className="selection-tools">
@@ -121,17 +150,17 @@ export default function TicketPurchasePage() {
               aria-pressed={selectionMode === "manual"}
               onClick={() => { setSelectionMode("manual"); setMessage(""); }}
             >
-              ম্যানুয়াল
+              {t("manual")}
             </button>
             <button type="button" className="selection-mode-button auto-button" onClick={selectAutoNumbers}>
-              <span aria-hidden="true">✦</span> অটো সিলেক্ট
+              <span aria-hidden="true">✦</span> {t("autoSelect")}
             </button>
             <button type="button" className="clear-selection-button" onClick={clearSelection}>
-              মুছুন
+              {t("clear")}
             </button>
           </div>
 
-          <div className="number-grid" role="group" aria-label="১ থেকে ৭২ পর্যন্ত টিকিট নম্বর">
+          <div className="number-grid" role="group" aria-label={t("numberSelection")}>
             {ALL_NUMBERS.map((number) => {
               const isSold = soldSet.has(number);
               const isSelected = selectedSet.has(number);
@@ -141,7 +170,7 @@ export default function TicketPurchasePage() {
                   type="button"
                   className={`number-cell${isSelected ? " selected" : ""}${isSold ? " sold" : ""}`}
                   aria-pressed={isSelected}
-                  aria-label={`নম্বর ${number}${isSold ? ", বিক্রি হয়েছে" : isSelected ? ", নির্বাচিত" : ""}`}
+                  aria-label={` ${number}${isSold ? ` - ${t("sold")}` : isSelected ? ` - ${t("selected")}` : ""}`}
                   aria-disabled={isSold}
                   onClick={() => toggleNumber(number)}
                 >
@@ -152,9 +181,9 @@ export default function TicketPurchasePage() {
           </div>
 
           <div className="number-legend">
-            <span><i className="legend-dot available-dot" /> পাওয়া যাচ্ছে</span>
-            <span><i className="legend-dot selected-dot" /> নির্বাচিত</span>
-            <span><i className="legend-dot sold-dot" /> বিক্রি হয়েছে</span>
+            <span><i className="legend-dot available-dot" /> {t("available")}</span>
+            <span><i className="legend-dot selected-dot" /> {t("selected")}</span>
+            <span><i className="legend-dot sold-dot" /> {t("sold")}</span>
           </div>
         </section>
 
@@ -166,20 +195,13 @@ export default function TicketPurchasePage() {
 
         <section className="selected-summary">
           <div className="selected-summary-heading">
-            <div>
-              <h2>আপনার নির্বাচিত নম্বর</h2>
-              <p>{selectedNumbers.length === REQUIRED_NUMBERS ? "১৬টি নম্বর নির্বাচন সম্পন্ন" : `আরও ${REQUIRED_NUMBERS - selectedNumbers.length}টি নম্বর নির্বাচন করুন`}</p>
-            </div>
-            <strong>{selectedNumbers.length}/১৬</strong>
+            <h2>{t("yourSelectedNumbers")}</h2>
+            <strong>{selectedNumbers.length}/11</strong>
           </div>
           <div className="selected-number-list" aria-live="polite">
             {selectedNumbers.length ? selectedNumbers.map((number) => (
               <span className="selected-number-chip" key={number}>{number}</span>
-            )) : <span className="empty-selection">এখনো কোনো নম্বর নির্বাচন করা হয়নি</span>}
-          </div>
-          <div className="purchase-total">
-            <span>টিকিটের দাম</span>
-            <strong>৳{ticketPrice.toLocaleString("en-BD")}</strong>
+            )) : <span className="empty-selection">{t("noSelection")}</span>}
           </div>
           <button
             type="button"
@@ -187,9 +209,9 @@ export default function TicketPurchasePage() {
             disabled={selectedNumbers.length !== REQUIRED_NUMBERS}
             onClick={continuePurchase}
           >
-            ১৬টি নম্বর নিশ্চিত করুন
+            {t("confirmEleven")}
           </button>
-          <p className="purchase-demo-note">এটি বর্তমানে ডেমো নির্বাচন ব্যবস্থা। প্রকৃত বিক্রি ও পেমেন্ট Supabase সংযুক্ত হওয়ার পর চালু হবে।</p>
+          <p className="purchase-demo-note">{t("purchaseDemo")}</p>
         </section>
       </main>
     </SiteShell>
