@@ -14,18 +14,21 @@ Validation:
 - Full name: ASCII English letters, spaces, apostrophes, periods, and hyphens only.
 - Password: 8–72 printable ASCII characters, at least two English letters, common/repeated/sequential passwords rejected.
 - Registration requires matching confirmation.
-- No OTP is sent. A trusted server operation confirms the phone field in Supabase Auth.
+- No OTP/SMS is sent. The Edge Function derives a deterministic, non-deliverable internal email identity (`@accounts.lotto.invalid`) from the normalized mobile number and uses Supabase Email/Password auth. The actual mobile number is stored in `public.profiles.mobile`.
 
 Security:
 - Service-role credentials are read only from Supabase Edge Function environment variables and never returned.
 - RLS remains enabled on profiles; the privileged client is used only for trusted profile operations.
-- Database-backed rate limits: registration 5/IP/hour; login 20/IP/15 minutes and 8/phone/15 minutes.
-- Login errors do not reveal whether a phone number exists.
+- Database-backed rate limits: registration 5/IP/hour; login 20/IP/15 minutes and 8/mobile/15 minutes.
+- `public.profiles.mobile` is NOT NULL, format-constrained to Bangladesh E.164 mobile numbers, and UNIQUE; RLS remains enabled.
+- Supabase Auth Email provider must be enabled. Phone provider can remain disabled; no Twilio/SMS credentials are required.
+- Login errors do not reveal whether a mobile number exists.
+- The internal email is generated server-side from SHA-256 of the normalized mobile; it is not displayed to users and is not a deliverable mailbox.
 - verify_jwt is false because register/login are public; protected actions validate bearer tokens explicitly.
 
 Important:
 - Phone ownership is not verified because OTP is intentionally disabled.
-- Configure the Supabase Auth phone provider before production use.
+- Do not enable Supabase Auth Phone provider for this design. Keep SMS/phone confirmation disabled; verify that Email provider is enabled. No SMTP is needed for this server-confirmed internal identity.
 - Add a secure account recovery process before launch; phone-based recovery cannot prove ownership without verification.
 
 
