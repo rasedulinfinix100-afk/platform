@@ -2,9 +2,11 @@
 import "./page.css";
 import Link from "next/link";
 import {useEffect,useRef,useState,type FormEvent} from "react";
+import {useRouter} from "next/navigation";
 import {SiteShell} from "@/components/SiteShell";
 import {PremiumIcon} from "@/components/PremiumIcon";
 import {useLanguage} from "@/components/LanguageProvider";
+import {useAuth,type AuthSession,type AuthUser} from "@/components/AuthProvider";
 
 const TURNSTILE_SITE_KEY="0x4AAAAAAGWyHDWPn7y0aEQa";
 const SUPABASE_URL="https://vdmvgafybznsdyfartfo.supabase.co";
@@ -28,6 +30,8 @@ declare global {
 
 export default function RegisterPage(){
   const {t}=useLanguage();
+  const router=useRouter();
+  const {establishSession}=useAuth();
   const widgetRef=useRef<HTMLDivElement>(null);
   const widgetIdRef=useRef<string|undefined>(undefined);
   const [message,setMessage]=useState("");
@@ -105,14 +109,19 @@ export default function RegisterPage(){
           password:String(data.get("password")??""),
           confirmPassword:String(data.get("confirmPassword")??""),
           turnstileToken:captchaToken
-        })
+        }),
+        cache:"no-store"
       });
       const result=await response.json().catch(()=>({error:"Unexpected server response. Please try again."}));
       if(!response.ok)throw new Error(typeof result.error==="string"?result.error:"Registration could not be completed. Please try again.");
-      setMessage("Account created successfully. Login integration is the next step.");
+      if(!result.session?.access_token||!result.session?.refresh_token||!result.user?.id){
+        throw new Error("Account was created, but a secure session was not returned. Please sign in.");
+      }
+      establishSession(result.session as AuthSession,result.user as AuthUser);
       form.reset();
       setCaptchaToken("");
       if(widgetIdRef.current)window.turnstile?.reset(widgetIdRef.current);
+      router.replace("/");
     }catch(error){
       setMessage(error instanceof Error?error.message:"Registration failed. Please try again.");
       setCaptchaToken("");
@@ -135,11 +144,11 @@ export default function RegisterPage(){
           <span>{t("mobile")}</span>
           <span className="auth-input-wrap">
             <span className="country-code" aria-label="Bangladesh country code"><span className="country-flag">🇧🇩</span><span>+880</span></span>
-            <input name="mobile" type="tel" autoComplete="tel" inputMode="numeric" placeholder={t("mobilePlaceholder")} required pattern="[0-9]*" onChange={(event)=>{event.currentTarget.value=event.currentTarget.value.replace(/[^0-9]/g,"");}}/>
+            <input name="mobile" type="tel" autoComplete="tel-national" inputMode="numeric" placeholder={t("mobilePlaceholder")} required pattern="01[3-9][0-9]{8}" maxLength={11} onChange={(event)=>{event.currentTarget.value=event.currentTarget.value.replace(/[^0-9]/g,"");}}/>
           </span>
         </label>
-        <label className="auth-field"><span>{t("password")}</span><input name="password" type="password" autoComplete="new-password" placeholder={t("createPasswordPlaceholder")} required minLength={8} onChange={(event)=>{event.currentTarget.value=event.currentTarget.value.replace(/[^\x20-\x7E]/g,"");}}/></label>
-        <label className="auth-field"><span>{t("confirmPassword")}</span><input name="confirmPassword" type="password" autoComplete="new-password" placeholder={t("confirmPasswordPlaceholder")} required minLength={8} onChange={(event)=>{event.currentTarget.value=event.currentTarget.value.replace(/[^\x20-\x7E]/g,"");}}/></label>
+        <label className="auth-field"><span>{t("password")}</span><input name="password" type="password" autoComplete="new-password" placeholder={t("createPasswordPlaceholder")} required minLength={8} maxLength={72} onChange={(event)=>{event.currentTarget.value=event.currentTarget.value.replace(/[^\x20-\x7E]/g,"");}}/></label>
+        <label className="auth-field"><span>{t("confirmPassword")}</span><input name="confirmPassword" type="password" autoComplete="new-password" placeholder={t("confirmPasswordPlaceholder")} required minLength={8} maxLength={72} onChange={(event)=>{event.currentTarget.value=event.currentTarget.value.replace(/[^\x20-\x7E]/g,"");}}/></label>
         <div className="turnstile-area">
           <span className="turnstile-label">SECURITY VERIFICATION</span>
           <div ref={widgetRef} className="turnstile-widget" aria-label="Cloudflare security verification"/>
