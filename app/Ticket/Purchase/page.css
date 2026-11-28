@@ -118,3 +118,11 @@
 .ticket-auth-required-note,.ticket-payment-notice{width:100%;max-width:760px;margin:14px auto 0;font-size:11px}
 @media(min-width:700px){.ticket-confirm-modal{align-items:center;justify-content:center}.ticket-confirm-header,.ticket-confirm-facts,.ticket-payment-options,.ticket-payment-demo-note,.ticket-auth-required-note,.ticket-payment-notice{width:min(100%,760px)}}
 @media(max-width:420px){.ticket-confirm-modal{padding-left:12px;padding-right:12px}.ticket-confirm-header{margin-bottom:15px}.ticket-payment-options{gap:7px;margin-top:15px}.ticket-payment-card{min-height:145px;padding:12px 5px;gap:9px}.ticket-payment-card>strong{font-size:9px}.ticket-payment-card>small{font-size:7px}.bkash-payment-logo{width:44px;height:44px}.mastercard-payment-logo{width:60px;height:42px}.ticket-confirm-fact>strong{font-size:12px}}
+
+/* Payment marks: white visibility canvas, symbol-only artwork */
+.ticket-payment-logo{background:#fff!important;border-radius:10px!important;padding:8px!important;box-sizing:content-box!important;object-fit:contain!important;display:block!important}
+.bkash-payment-logo{width:54px!important;height:54px!important;padding:8px!important}
+.mastercard-payment-logo{width:70px!important;height:48px!important;padding:8px!important}
+.ticket-payment-card.bkash,.ticket-payment-card.bank-card{gap:15px!important}
+.ticket-payment-card.bkash>small,.ticket-payment-card.bank-card>small,.ticket-payment-card .payment-disabled-label{display:none!important}
+@media(max-width:420px){.bkash-payment-logo{width:46px!important;height:46px!important}.mastercard-payment-logo{width:62px!important;height:42px!important}}
