@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { SiteShell } from "@/components/SiteShell";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/AuthProvider";
 import { useLanguage } from "@/components/LanguageProvider";
 import "./page.css";
 
@@ -22,15 +24,22 @@ const TICKET_PRIZES: Record<number, number> = {
 };
 
 type LoaderPhase = "checking" | "success" | "ready";
+type PurchaseAuthPhase = "idle" | "checking" | "success";
+const TEST_DRAW_AT = new Date("2026-12-05T20:00:00+06:00");
+const DEMO_WALLET_BALANCE = 0; // Replace with authenticated Supabase wallet balance.
 
 export default function TicketPurchasePage() {
   const { language, t } = useLanguage();
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
   const [ticketPrice, setTicketPrice] = useState(10);
   const [loaderPhase, setLoaderPhase] = useState<LoaderPhase>("checking");
   const [selectedNumbers, setSelectedNumbers] = useState<number[]>([]);
   const [selectionMode, setSelectionMode] = useState<"manual" | "auto">("manual");
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"error" | "success" | "info">("info");
+  const [purchaseAuthPhase, setPurchaseAuthPhase] = useState<PurchaseAuthPhase>("idle");
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
 
   useEffect(() => {
     const requestedPrice = Number(new URLSearchParams(window.location.search).get("price"));
@@ -105,7 +114,62 @@ export default function TicketPurchasePage() {
       showMessage(t("selectExactlyEleven"), "error");
       return;
     }
-    showMessage(t("purchaseDemo"), "success");
+    if (purchaseAuthPhase !== "idle" || confirmationOpen) return;
+    setMessage("");
+    setPurchaseAuthPhase("checking");
+    window.setTimeout(() => {
+      setPurchaseAuthPhase("success");
+      window.setTimeout(() => {
+        setPurchaseAuthPhase("idle");
+        setConfirmationOpen(true);
+      }, 520);
+    }, 3300);
+  }
+
+  function buyWithBalance() {
+    if (!isAuthenticated) {
+      router.push("/Client/Auth/Login/");
+      return;
+    }
+    if (DEMO_WALLET_BALANCE < ticketPrice) {
+      router.push("/Client/Wallets/Deposit/");
+      return;
+    }
+    showMessage(t("balanceCheckoutPending"), "info");
+    setConfirmationOpen(false);
+  }
+
+  function buyWithBkash() {
+    if (!isAuthenticated) {
+      router.push("/Client/Auth/Login/");
+      return;
+    }
+    showMessage(t("paymentUnavailable"), "info");
+  }
+
+  const drawDateLabel = language === "bn"
+    ? t("drawDateValue")
+    : new Intl.DateTimeFormat("en-US", {
+        timeZone: "Asia/Dhaka", dateStyle: "long", timeStyle: "short"
+      }).format(TEST_DRAW_AT);
+
+
+  if (purchaseAuthPhase !== "idle") {
+    return (
+      <div className={"ticket-purchase-auth-screen " + (purchaseAuthPhase === "success" ? "is-success" : "")} role="status" aria-live="assertive">
+        {purchaseAuthPhase === "checking" ? (
+          <>
+            <div className="ticket-purchase-auth-spinner" aria-hidden="true"><span /></div>
+            <strong>{t("ticketNumberProfileAuth")}<span className="auth-ellipsis">...</span></strong>
+          </>
+        ) : (
+          <>
+            <div className="ticket-purchase-auth-check" aria-hidden="true">✓</div>
+            <strong>{t("ticketAuthVerified")}</strong>
+          </>
+        )}
+      </div>
+    );
   }
 
   if (loaderPhase !== "ready") {
@@ -211,9 +275,48 @@ export default function TicketPurchasePage() {
           >
             {t("confirmEleven")}
           </button>
-          <p className="purchase-demo-note">{t("purchaseDemo")}</p>
         </section>
       </main>
+
+      {confirmationOpen && (
+        <div className="ticket-confirm-overlay" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setConfirmationOpen(false); }}>
+          <section className="ticket-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="ticket-confirm-title">
+            <header className="ticket-confirm-header">
+              <div><span className="ticket-confirm-eyebrow">LOTTO · CHECKOUT</span><h2 id="ticket-confirm-title">{t("ticketDetails")}</h2></div>
+              <button type="button" className="ticket-confirm-close" onClick={() => setConfirmationOpen(false)} aria-label={t("close")}>×</button>
+            </header>
+            <div className="ticket-confirm-facts">
+              <div className="ticket-confirm-fact"><span>{t("ticketNumbers")}</span><div className="ticket-confirm-numbers">{selectedNumbers.map((number) => <b key={number}>{number}</b>)}</div></div>
+              <div className="ticket-confirm-fact-row">
+                <div className="ticket-confirm-fact"><span>{t("ticketPriceLabel")}</span><strong>৳{ticketPrice.toLocaleString(language === "bn" ? "bn-BD" : "en-BD")}</strong></div>
+                <div className="ticket-confirm-fact"><span>{t("jackpot")}</span><strong>৳{formattedJackpot}</strong></div>
+              </div>
+              <div className="ticket-confirm-fact"><span>{t("drawDate")}</span><strong>{drawDateLabel}</strong></div>
+            </div>
+            <div className="ticket-payment-options">
+              <button type="button" className="ticket-payment-card balance" onClick={buyWithBalance}>
+                <span className="ticket-payment-icon">৳</span>
+                <strong>{t("buyWithBalance")}</strong>
+                <small>{t("demoBalance")}: ৳{DEMO_WALLET_BALANCE.toLocaleString(language === "bn" ? "bn-BD" : "en-BD")}</small>
+              </button>
+              <button type="button" className="ticket-payment-card bkash" onClick={buyWithBkash}>
+                <span className="ticket-payment-icon bkash-logo">bKash</span>
+                <strong>{t("buyWithBkash")}</strong>
+                <small>{t("paymentUnavailable")}</small>
+              </button>
+              <button type="button" className="ticket-payment-card bank-card" disabled aria-disabled="true">
+                <span className="ticket-payment-icon card-logo">V/M</span>
+                <strong>{t("visaMaster")}</strong>
+                <small>{t("cardDisabled")}</small>
+                <span className="payment-disabled-label">DISABLED</span>
+              </button>
+            </div>
+            {!isAuthenticated && <p className="ticket-auth-required-note">{t("loginRequired")}</p>}
+            {message && <p className={"ticket-payment-notice " + messageType} role="status">{message}</p>}
+            <p className="ticket-payment-demo-note">{t("paymentUnavailable")}</p>
+          </section>
+        </div>
+      )}
     </SiteShell>
   );
 }
