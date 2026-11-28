@@ -81,7 +81,8 @@ export default function RegisterPage(){
       setMessage("Please complete the security verification first.");
       return;
     }
-    const data=new FormData(event.currentTarget);
+    const form=event.currentTarget;
+    const data=new FormData(form);
     if(data.get("password")!==data.get("confirmPassword")){
       setMessage("Passwords do not match. Please check again.");
       return;
@@ -109,7 +110,7 @@ export default function RegisterPage(){
       const result=await response.json().catch(()=>({error:"Unexpected server response. Please try again."}));
       if(!response.ok)throw new Error(typeof result.error==="string"?result.error:"Registration could not be completed. Please try again.");
       setMessage("Account created successfully. You can now continue to sign in.");
-      event.currentTarget.reset();
+      form.reset();
       setCaptchaToken("");
       if(widgetIdRef.current)window.turnstile?.reset(widgetIdRef.current);
     }catch(error){
