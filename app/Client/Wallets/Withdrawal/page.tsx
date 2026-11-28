@@ -1,6 +1,7 @@
 "use client";
 import {useState,type FormEvent} from "react";
 import {SiteShell} from "@/components/SiteShell";
+import {AuthGate} from "@/components/AuthGate";
 import {withdrawalMethods,fiatWithdrawalChannels} from "@/lib/demo-config";
 import {PremiumIcon} from "@/components/PremiumIcon";
 import "./withdrawal.css";
@@ -18,7 +19,7 @@ export default function WithdrawalPage(){
  const selectedChannel=fiatWithdrawalChannels.find(c=>c.id===channel)?.name??"Channel One";
  function changeMode(next:PaymentMode){setMode(next);setMethod(next==="crypto"?cryptoMethods[0]:"bKash");setAmount("");setAccount("");setMessage("")}
  function submit(event:FormEvent<HTMLFormElement>){event.preventDefault();setMessage("Demo interface only. Your withdrawal request has not been submitted because backend integration is not connected yet.");}
- return <SiteShell>
+ return <AuthGate><SiteShell>
   <section className="withdrawal-mode-switch" role="group" aria-label="Withdrawal type">
    <button type="button" className={mode==="fiat"?"withdrawal-mode-tab active":"withdrawal-mode-tab"} onClick={()=>changeMode("fiat")} aria-pressed={mode==="fiat"}>Fiat</button>
    <button type="button" className={mode==="crypto"?"withdrawal-mode-tab active":"withdrawal-mode-tab"} onClick={()=>changeMode("crypto")} aria-pressed={mode==="crypto"}>Crypto</button>
