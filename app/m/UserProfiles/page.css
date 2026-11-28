@@ -108,3 +108,23 @@
 .profile-fullscreen-body .profile-form input,.profile-fullscreen-body .profile-file{min-height:46px;font-size:13px}
 .profile-fullscreen-body .profile-form button,.profile-fullscreen-body .profile-primary{min-height:46px;font-size:12px}
 @media(min-width:620px){.profile-drawer{width:370px}.profile-fullscreen-body{padding:28px 24px}.profile-fullscreen-header{padding-left:24px;padding-right:24px}}
+
+/* Latest requested profile refinements */
+.profile-settings-trigger{width:44px;height:44px;color:#cce7ed;filter:drop-shadow(0 2px 8px #16b8b040)}
+.profile-settings-trigger svg{width:27px;height:27px;stroke-width:1.65}
+.profile-card-number{display:block;margin:27px 0 24px;font-size:clamp(17px,4.7vw,23px);letter-spacing:.085em}
+.profile-card-bottom{margin-top:0}
+.profile-card-bottom>div:first-child{gap:6px}
+.profile-card-bottom strong{max-width:72vw}
+.profile-card-pin{display:grid;gap:5px}
+.profile-card-pin strong{font-size:16px;letter-spacing:.16em}
+.profile-card-watermark{display:none!important}
+.profile-drawer .profile-settings-nav{gap:0}
+.profile-drawer .profile-settings-nav button{min-height:82px;padding:14px 7px;border:0;border-radius:0;background:transparent;box-shadow:none;position:relative}
+.profile-drawer .profile-settings-nav button+button{border-top:1px solid #285064}
+.profile-drawer .profile-settings-nav button.active{border-color:#285064;background:transparent;box-shadow:none}
+.profile-drawer .profile-settings-nav button.active:before{content:"";position:absolute;left:0;top:17px;bottom:17px;width:2px;border-radius:2px;background:#20c5bb}
+.profile-drawer .profile-settings-nav button>svg:first-child{width:24px;height:24px}
+.profile-drawer .profile-settings-nav button strong{font-size:14px}
+.profile-drawer .profile-settings-nav button small{font-size:11px}
+.profile-drawer .profile-settings-nav button>svg:last-child{width:22px;height:22px}
