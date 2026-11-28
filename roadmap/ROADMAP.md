@@ -221,3 +221,13 @@ Use this structure:
 - **Backend sequence:** Auth Admin user creation returned HTTP 200; profile insert returned HTTP 201; password token grant returned HTTP 200. Rate-limit RPC returned HTTP 200.
 - **Result:** Fresh account creation and profile creation are **verified successful** from Supabase production logs. No phone number, email identity, or user ID is copied into this roadmap.
 - **Token refresh:** Still pending. The newly created account's browser session should remain signed in and the user should keep the site tab open until the access-token refresh window; do not log out or clear site data before the next check.
+
+### 2026-11-28 — Automatic token-refresh verification deferred
+
+- **Area:** Supabase Auth session lifecycle / automatic refresh-token renewal
+- **Why this task was deferred:** User explicitly requested recording this item for later and confirmed that spending time on the runtime test now is unnecessary.
+- **Read-only review completed:** Reviewed `components/AuthProvider.tsx`, Login/Register pages, and active Supabase `auth` Edge Function version 8. The frontend code implements refresh-token exchange, updates the stored session, schedules renewal, and verifies the session through `me`.
+- **Log review:** The recent Supabase logs reviewed contained successful password-grant and authenticated `me` requests, but no `grant_type=refresh_token` request. Therefore, automatic token refresh is implemented in code but **not yet runtime-verified**.
+- **Decision:** Defer the interactive token-refresh test. Do not create a temporary GitHub test page, modify application code, or change Supabase configuration for this check now.
+- **Current state:** No GitHub application files, Supabase configuration, database schema, or user session were changed during this review.
+- **Next action (later):** When the user chooses to resume authentication verification, perform a controlled test on Android Chrome that confirms the refresh request succeeds, the rotated access/refresh tokens are safely persisted, and the authenticated `me` request still succeeds. Never request or expose session tokens.
