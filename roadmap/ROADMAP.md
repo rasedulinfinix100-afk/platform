@@ -83,6 +83,19 @@ Record each meaningful change here. The reason is as important as the change its
 - **Result:** Backend architecture updated; full registration/login/session test still pending. Supabase Auth Email provider must be enabled. Phone provider and Twilio remain unnecessary.
 - **Remaining risks:** Phone ownership is still unverified without OTP; account recovery needs a separate secure design. GitHub Pages workflow issue remains a separate blocker.
 
+### 2026-11-28 — Registration and Login end-to-end verification
+
+- **Area:** Authentication live test
+- **Why this test was performed:** User reported that Registration and Login were successful and asked for independent verification.
+- **Evidence checked:** Supabase unified logs for Auth Function version 8 and database records.
+- **Registration:** Edge Function returned HTTP 201 at 2026-11-28 09:23:41 UTC. Auth audit log recorded `user_signedup` via the internal email provider; subsequent password grant returned HTTP 200.
+- **Login:** A later Edge Function request returned HTTP 200 at 09:24:20 UTC; Supabase Auth recorded `login` with password grant and HTTP 200. The function also successfully read the matching profile (HTTP 200).
+- **Database verification:** Exactly 1 Auth user, 1 profile, and 1 linked Auth/profile row. The profile mobile field passes the Bangladesh E.164 format check.
+- **Additional observed events:** Logout was recorded at 09:23:48 UTC. An invalid-credentials attempt returned HTTP 401 at 09:24:14 UTC, followed by successful login at 09:24:20 UTC; this is expected behavior and confirms invalid credentials are rejected.
+- **Result:** Registration and Login are independently verified successful against Supabase Auth Function version 8. This confirms backend/API success, not yet the GitHub Pages production deployment.
+- **Files changed:** Only this roadmap entry.
+- **Remaining checks:** Session restoration after browser reload, refresh-token renewal, and logout UX from the frontend; published-site tests remain dependent on resolving the separate GitHub Pages build failure.
+
 ## 4. Next actions
 
 1. In Supabase Auth Providers, keep Phone provider OFF and verify Email provider is ON; do not configure Twilio or SMS.
