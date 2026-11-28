@@ -109,7 +109,7 @@ export default function RegisterPage(){
       });
       const result=await response.json().catch(()=>({error:"Unexpected server response. Please try again."}));
       if(!response.ok)throw new Error(typeof result.error==="string"?result.error:"Registration could not be completed. Please try again.");
-      setMessage("Account created successfully. You can now continue to sign in.");
+      setMessage("Account created successfully. Login integration is the next step.");
       form.reset();
       setCaptchaToken("");
       if(widgetIdRef.current)window.turnstile?.reset(widgetIdRef.current);
