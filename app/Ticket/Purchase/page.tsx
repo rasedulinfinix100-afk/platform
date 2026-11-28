@@ -295,17 +295,17 @@ export default function TicketPurchasePage() {
             </div>
             <div className="ticket-payment-options">
               <button type="button" className="ticket-payment-card balance" onClick={buyWithBalance}>
-                <span className="ticket-payment-icon">৳</span>
+                
                 <strong>{t("buyWithBalance")}</strong>
                 <small>{t("demoBalance")}: ৳{DEMO_WALLET_BALANCE.toLocaleString(language === "bn" ? "bn-BD" : "en-BD")}</small>
               </button>
               <button type="button" className="ticket-payment-card bkash" onClick={buyWithBkash}>
-                <span className="ticket-payment-icon bkash-logo">bKash</span>
+                <img className="ticket-payment-logo bkash-payment-logo" src="/platform/images/payments/bkash.webp" alt="bKash" />
                 <strong>{t("buyWithBkash")}</strong>
                 <small>{t("paymentUnavailable")}</small>
               </button>
               <button type="button" className="ticket-payment-card bank-card" disabled aria-disabled="true">
-                <span className="ticket-payment-icon card-logo">V/M</span>
+                <img className="ticket-payment-logo mastercard-payment-logo" src="/platform/images/payments/mastercard.webp" alt="Mastercard" />
                 <strong>{t("visaMaster")}</strong>
                 <small>{t("cardDisabled")}</small>
                 <span className="payment-disabled-label">DISABLED</span>
