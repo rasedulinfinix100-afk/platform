@@ -35,5 +35,5 @@ export default function WithdrawalPage(){
    <button className="withdrawal-submit" type="submit">Request Withdrawal via {method}<PremiumIcon name="chevron" size={18}/></button>
    {message&&<p className="withdrawal-demo-notice" role="status">{message}</p>}
   </form>
- </SiteShell>
+ </SiteShell></AuthGate>
 }
