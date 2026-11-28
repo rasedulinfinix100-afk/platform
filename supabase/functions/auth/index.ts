@@ -125,6 +125,11 @@ async function verifyTurnstile(token: unknown, req: Request): Promise<boolean> {
   }
 }
 
+async function authEmailForMobile(phone: string): Promise<string> {
+  // Stable, non-deliverable internal identity. The user's real mobile stays in profiles.
+  return `mobile-${await sha256(phone)}@accounts.lotto.invalid`;
+}
+
 async function handleRegister(body: Record<string, unknown>, req: Request) {
   const fullName = validateName(body.fullName);
   const phone = normalizeMobile(body.mobile);
@@ -146,11 +151,12 @@ async function handleRegister(body: Record<string, unknown>, req: Request) {
     return json({ error: "Too many registration attempts. Please try again later." }, 429);
   }
 
+  const authEmail = await authEmailForMobile(phone);
   const { data: created, error: createError } = await admin.auth.admin.createUser({
-    phone,
+    email: authEmail,
     password: body.password as string,
-    phone_confirm: true,
-    user_metadata: { full_name: fullName },
+    email_confirm: true,
+    user_metadata: { full_name: fullName, mobile: phone },
   });
 
   if (createError || !created.user) {
@@ -162,6 +168,7 @@ async function handleRegister(body: Record<string, unknown>, req: Request) {
   const { error: profileError } = await admin.from("profiles").insert({
     id: userId,
     full_name: fullName,
+    mobile: phone,
   });
 
   if (profileError) {
@@ -171,7 +178,7 @@ async function handleRegister(body: Record<string, unknown>, req: Request) {
   }
 
   const { data: sessionData, error: signInError } = await publicAuth.auth.signInWithPassword({
-    phone,
+    email: authEmail,
     password: body.password as string,
   });
 
@@ -203,8 +210,9 @@ async function handleLogin(body: Record<string, unknown>, req: Request) {
     return json({ error: "Too many login attempts. Please try again later." }, 429);
   }
 
+  const authEmail = await authEmailForMobile(phone);
   const { data, error } = await publicAuth.auth.signInWithPassword({
-    phone,
+    email: authEmail,
     password: body.password as string,
   });
   if (error || !data.session || !data.user) {
@@ -212,7 +220,7 @@ async function handleLogin(body: Record<string, unknown>, req: Request) {
   }
 
   const { data: profile } = await admin.from("profiles")
-    .select("full_name")
+    .select("full_name, mobile")
     .eq("id", data.user.id)
     .maybeSingle();
 
@@ -230,13 +238,13 @@ async function handleMe(req: Request) {
   if (error || !data.user) return json({ error: "Invalid or expired session." }, 401);
 
   const { data: profile, error: profileError } = await admin.from("profiles")
-    .select("full_name")
+    .select("full_name, mobile")
     .eq("id", data.user.id)
     .maybeSingle();
   if (profileError) return json({ error: "Unable to load profile." }, 500);
 
   return json({
-    user: { id: data.user.id, fullName: profile?.full_name ?? "", mobile: data.user.phone ?? "" },
+    user: { id: data.user.id, fullName: profile?.full_name ?? "", mobile: profile?.mobile ?? "" },
   });
 }
 
