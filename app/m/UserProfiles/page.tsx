@@ -102,9 +102,9 @@ function ProfileContent(){
       <aside className="profile-drawer" role="dialog" aria-modal="true" aria-labelledby="profile-drawer-title" onClick={e=>e.stopPropagation()}>
         <div className="profile-drawer-heading"><div><span className="profile-eyebrow">LOTTO BD</span><h2 id="profile-drawer-title">Settings</h2></div><button type="button" className="profile-settings-close" aria-label="Close settings" onClick={()=>setSettingsOpen(false)}><Icon name="close"/></button></div>
         <nav className="profile-settings-nav" aria-label="Profile sections">
-          <button type="button" onClick={()=>{setSection("account");setSettingsOpen(false);setMessage("");setError("");}}><Icon name="user"/><span><strong>Account Info</strong><small>Personal details and contact email</small></span><Icon name="chevron"/></button>
-          <button type="button" onClick={()=>{setSection("verification");setSettingsOpen(false);setMessage("");setError("");}}><Icon name="shield"/><span><strong>Verification</strong><small>Identity information and NID</small></span><Icon name="chevron"/></button>
-          <button type="button" onClick={()=>{setSection("login");setSettingsOpen(false);setMessage("");setError("");}}><Icon name="clock"/><span><strong>Last Login</strong><small>Recent sign-in information</small></span><Icon name="chevron"/></button>
+          <button type="button" onClick={()=>{setSection("account");setSettingsOpen(false);setMessage("");setError("");}}><Icon name="user"/><span><strong>Account Info</strong></span><Icon name="chevron"/></button>
+          <button type="button" onClick={()=>{setSection("verification");setSettingsOpen(false);setMessage("");setError("");}}><Icon name="shield"/><span><strong>Verification</strong></span><Icon name="chevron"/></button>
+          <button type="button" onClick={()=>{setSection("login");setSettingsOpen(false);setMessage("");setError("");}}><Icon name="clock"/><span><strong>Last Login</strong></span><Icon name="chevron"/></button>
         </nav>
       </aside>
     </div>}
