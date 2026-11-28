@@ -90,6 +90,41 @@ async function allowRateLimit(key: string, maxRequests: number, windowSeconds: n
   return data === true;
 }
 
+async function verifyTurnstile(token: unknown, req: Request): Promise<boolean> {
+  const secret = Deno.env.get("CLOUDFLARE_TURNSTILE_SECRET_KEY");
+  if (!secret || typeof token !== "string" || token.length < 1 || token.length > 2048) {
+    console.error("Turnstile is not configured or token is missing.");
+    return false;
+  }
+
+  try {
+    const form = new FormData();
+    form.append("secret", secret);
+    form.append("response", token);
+    const remoteIp = req.headers.get("cf-connecting-ip");
+    if (remoteIp) form.append("remoteip", remoteIp);
+
+    const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      body: form,
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!response.ok) return false;
+
+    const result = await response.json();
+    if (result.success !== true) return false;
+
+    const expectedHostname = Deno.env.get("TURNSTILE_EXPECTED_HOSTNAME");
+    if (expectedHostname && result.hostname !== expectedHostname) return false;
+    if (result.action !== "register") return false;
+
+    return true;
+  } catch (error) {
+    console.error("Turnstile verification unavailable:", error);
+    return false;
+  }
+}
+
 async function handleRegister(body: Record<string, unknown>, req: Request) {
   const fullName = validateName(body.fullName);
   const phone = normalizeMobile(body.mobile);
@@ -99,6 +134,11 @@ async function handleRegister(body: Record<string, unknown>, req: Request) {
   if (passwordError) return json({ error: passwordError }, 400);
   if (typeof body.confirmPassword !== "string" || body.password !== body.confirmPassword) {
     return json({ error: "Password and confirm password do not match." }, 400);
+  }
+
+  // Require a fresh, single-use Turnstile token before any account creation.
+  if (!await verifyTurnstile(body.turnstileToken, req)) {
+    return json({ error: "Security check failed. Please complete the verification and try again." }, 403);
   }
 
   const ip = clientIp(req);
