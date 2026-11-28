@@ -69,3 +69,5 @@
 @media(max-height:720px){
   .auth-wrap{min-height:auto;padding-top:20px;padding-bottom:24px}
 }
+
+.auth-submit:disabled{opacity:.55;cursor:not-allowed;filter:saturate(.65);box-shadow:none}
