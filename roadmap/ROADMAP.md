@@ -22,9 +22,10 @@
 |---|---|---|
 | Frontend foundation and visual direction | In progress | Existing Next.js App Router structure and premium dark UI |
 | Login and registration screens | Implemented, awaiting live verification | Bangladesh mobile format; registration includes Cloudflare Turnstile |
-| Auth Edge Function | Active | Supabase function `auth`, deployed version 7 |
+| Auth Edge Function | Active | Supabase function `auth`, deployed version 8; OTP-free mobile-to-internal-email mapping |
 | Session persistence and restoration | Implemented, awaiting end-to-end verification | AuthProvider stores and restores session, refreshes tokens, verifies `me`, and handles logout |
-| Profile table permissions | Fixed; verified | `service_role` now has INSERT and SELECT on `public.profiles`; RLS remains enabled |
+| Profile table permissions | Fixed; verified | `service_role` has INSERT and SELECT on `public.profiles`; RLS remains enabled |
+| Mobile identity mapping | Implemented; verified | `profiles.mobile` is NOT NULL, Bangladesh E.164 format-constrained, and UNIQUE |
 | Login end-to-end test | Pending | Requires a valid test account and user-provided credentials |
 | Registration end-to-end test | Pending retest | Previous attempt failed at profile insert before the permission fix |
 | GitHub Pages deployment | Blocked | Latest recorded workflow failed during TypeScript checking because the Deno-only import in `supabase/functions/auth/index.ts` was included in the Next.js typecheck |
@@ -66,14 +67,30 @@ Record each meaningful change here. The reason is as important as the change its
 - **Next action:** Exclude Deno Edge Function sources from the Next.js TypeScript project check (without changing Edge Function runtime code), then rerun the workflow. This requires explicit approval before editing GitHub files.
 - **Result:** Latest recorded changes were not confirmed deployed by that workflow.
 
+### 2026-11-28 — Replace Supabase Phone auth with OTP-free mobile/password identity
+
+- **Area:** Supabase authentication architecture
+- **Why this task was done:** Supabase Auth logs showed `Phone logins are disabled`, while enabling Phone provider in Dashboard required Twilio credentials. The user explicitly does not want Twilio, SMS, or OTP costs and approved an alternative.
+- **Design:** Keep the user-facing Bangladesh mobile + password experience. The Edge Function derives a stable, non-deliverable internal email (`mobile-<SHA-256>@accounts.lotto.invalid`) from the normalized mobile and uses Supabase Email/Password auth. The user never enters or sees an email. No email is sent; admin-created users are email-confirmed server-side.
+- **Database change:** Added `public.profiles.mobile` as NOT NULL, with Bangladesh E.164 format check and UNIQUE constraint. Existing precheck found 0 auth users and 0 profiles, so no existing accounts needed migration.
+- **Security:** RLS remains enabled; service_role INSERT/SELECT privileges remain as previously granted. No anon/authenticated table grants added. Turnstile, DB-backed rate limits, password validation, generic login errors, and bearer-token checks remain.
+- **Files/services changed:** `supabase/functions/auth/index.ts`, `supabase/functions/auth/README.md`, `public.profiles`, and this roadmap.
+- **Why existing files were reopened:** The prior implementation stored the number as a Supabase Auth phone identity, which cannot password-sign-in while Phone provider is disabled. Reusing the existing function keeps session/me/logout contracts and frontend forms unchanged while switching the underlying Auth identifier.
+- **SQL backup:** [SQL Backup - mobile identity mapping for password auth](https://supabase.com/dashboard/project/vdmvgafybznsdyfartfo/explorer/notebook/8b1a7bdf-7315-461c-829b-889fe4326276), saved before execution.
+- **SQL verification:** Confirmed `profiles.mobile` exists and is NOT NULL; format CHECK and UNIQUE constraints exist; RLS=true; service_role INSERT=true and SELECT=true.
+- **Deployment:** Supabase Edge Function `auth` deployed ACTIVE as version 8. GitHub commit: `3b7f4c0a0efe4e24cf1df32c02c8f8486fb9efa2`.
+- **Frontend:** No Login/Register/AuthProvider changes were needed because their request/response shape is unchanged.
+- **Result:** Backend architecture updated; full registration/login/session test still pending. Supabase Auth Email provider must be enabled. Phone provider and Twilio remain unnecessary.
+- **Remaining risks:** Phone ownership is still unverified without OTP; account recovery needs a separate secure design. GitHub Pages workflow issue remains a separate blocker.
+
 ## 4. Next actions
 
-1. Retest registration after the profile permission repair using a fresh, valid test mobile number, a strong password, and a fresh Turnstile challenge.
-2. Verify the created profile row and successful session establishment.
-3. Test Login with that account.
-4. Verify page reload, session restoration, token refresh, and logout.
-5. Obtain approval to fix the GitHub Pages TypeScript build issue, then rerun deployment.
-6. After deployment succeeds, repeat the authentication tests against the published site.
+1. In Supabase Auth Providers, keep Phone provider OFF and verify Email provider is ON; do not configure Twilio or SMS.
+2. Retest Registration with a fresh valid Bangladesh mobile number, strong password, and fresh Turnstile challenge.
+3. Verify the new Auth user has an internal `.invalid` email identity and the matching `profiles.mobile` record.
+4. Test Login, page reload/session restoration, token refresh, and logout.
+5. Obtain separate approval to fix the GitHub Pages TypeScript build issue, then rerun deployment.
+6. After the frontend deploy succeeds, repeat tests on the published site.
 
 ## 5. Required format for every future update
 
