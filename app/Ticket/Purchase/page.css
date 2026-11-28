@@ -46,3 +46,6 @@
 .purchase-demo-note{margin:8px 0 0;color:#7892a3;font-size:8px;text-align:center;line-height:1.5}
 @media(min-width:560px){.purchase-page{gap:15px}.number-selection-panel,.selected-summary{padding:16px}.number-grid{gap:11px 9px}.number-cell{max-width:54px;justify-self:center;font-size:14px}.number-grid{grid-template-columns:repeat(9,minmax(0,1fr))}}
 @media(max-width:360px){.number-grid{gap:7px 4px}.number-cell{font-size:10px}.number-selection-panel,.selected-summary{padding:10px}.selection-mode-button,.clear-selection-button{padding:0 8px;font-size:8px}}
+
+/* Keep lottery number controls perfectly circular despite shared button styling. */
+.purchase-page .number-grid .number-cell{border-radius:50%!important}
