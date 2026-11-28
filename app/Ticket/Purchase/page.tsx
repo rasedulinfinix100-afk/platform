@@ -142,7 +142,7 @@ export default function TicketPurchasePage() {
                   className={`number-cell${isSelected ? " selected" : ""}${isSold ? " sold" : ""}`}
                   aria-pressed={isSelected}
                   aria-label={`নম্বর ${number}${isSold ? ", বিক্রি হয়েছে" : isSelected ? ", নির্বাচিত" : ""}`}
-                  disabled={isSold}
+                  aria-disabled={isSold}
                   onClick={() => toggleNumber(number)}
                 >
                   {number}
