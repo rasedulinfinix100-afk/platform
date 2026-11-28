@@ -73,24 +73,24 @@ function clientIp(req: Request): string | null {
   // Only trust Cloudflare's edge-provided address; do not trust client-supplied forwarding headers.
   const value = req.headers.get("cf-connecting-ip")?.trim() ?? "";
   if (!value || value.length > 45) return null;
-  if (/^(?:\\d{1,3}\\.){3}\\d{1,3}$/.test(value) || /^[0-9a-fA-F:]+$/.test(value)) return value;
+  if (/^(?:\d{1,3}\.){3}\d{1,3}$/.test(value) || /^[0-9a-fA-F:]+$/.test(value)) return value;
   return null;
 }
 
 function browserName(userAgent: string): string | null {
   if (!userAgent) return null;
-  if (/Edg\\//i.test(userAgent)) return "Microsoft Edge";
-  if (/OPR\\//i.test(userAgent)) return "Opera";
-  if (/Firefox\\//i.test(userAgent)) return "Firefox";
-  if (/Chrome\\//i.test(userAgent) && !/Chromium\\//i.test(userAgent)) return "Chrome";
-  if (/Safari\\//i.test(userAgent) && !/Chrome\\//i.test(userAgent)) return "Safari";
+  if (/Edg\//i.test(userAgent)) return "Microsoft Edge";
+  if (/OPR\//i.test(userAgent)) return "Opera";
+  if (/Firefox\//i.test(userAgent)) return "Firefox";
+  if (/Chrome\//i.test(userAgent) && !/Chromium\//i.test(userAgent)) return "Chrome";
+  if (/Safari\//i.test(userAgent) && !/Chrome\//i.test(userAgent)) return "Safari";
   return "Other";
 }
 
 function deviceModel(userAgent: string): string | null {
   if (/iPhone/i.test(userAgent)) return "iPhone";
   if (/iPad/i.test(userAgent)) return "iPad";
-  const android = userAgent.match(/Android[^;)]*;\\s*([^;)]+?)(?:\\s+Build|[;)])/i);
+  const android = userAgent.match(/Android[^;)]*;\s*([^;)]+?)(?:\s+Build|[;)])/i);
   if (android?.[1]) return android[1].trim().slice(0, 120) || "Android device";
   if (/Android/i.test(userAgent)) return "Android device";
   if (/Windows|Macintosh|Mac OS X|Linux/i.test(userAgent)) return "Desktop";
