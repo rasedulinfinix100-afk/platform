@@ -26,7 +26,7 @@ async function api(path:string,token:string,init:RequestInit={}){
 }
 function Icon({name}:{name:"settings"|"user"|"shield"|"clock"|"chevron"|"close"|"chip"}) {
   const common={width:22,height:22,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:1.8,strokeLinecap:"round" as const,strokeLinejoin:"round" as const, "aria-hidden":true as const};
-  if(name==="settings")return <svg {...common}><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.7 1l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.7-1l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-2l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.7-1l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.7 1l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1 0 2Z" transform="translate(-1 -1)"/></svg>;
+  if(name==="settings")return <svg {...common} width="25" height="25" viewBox="0 0 24 24"><path d="M12 2.75 13.35 4.8a7.7 7.7 0 0 1 1.55.65l2.35-.55 1.55 2.7-1.55 1.85c.1.55.1 1.1 0 1.65l1.55 1.85-1.55 2.7-2.35-.55a7.7 7.7 0 0 1-1.55.65L12 17.8l-1.35-2.05a7.7 7.7 0 0 1-1.55-.65l-2.35.55-1.55-2.7 1.55-1.85a5.5 5.5 0 0 1 0-1.65L5.2 7.6l1.55-2.7 2.35.55a7.7 7.7 0 0 1 1.55-.65L12 2.75Z" transform="translate(0 1) scale(1 .9)"/><circle cx="12" cy="11" r="2.65"/></svg>;
   if(name==="user")return <svg {...common}><circle cx="12" cy="8" r="3.4"/><path d="M5 20c.6-3.3 3.1-5 7-5s6.4 1.7 7 5"/></svg>;
   if(name==="shield")return <svg {...common}><path d="M12 3 19 6v5c0 4.5-2.8 7.8-7 10-4.2-2.2-7-5.5-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg>;
   if(name==="clock")return <svg {...common}><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>;
@@ -94,8 +94,8 @@ function ProfileContent(){
       <div className="profile-account-card">
         <div className="profile-card-shine"/>
         <div className="profile-card-top"><span className="profile-card-chip"><Icon name="chip"/></span></div>
-        <div className="profile-card-bottom"><div><span className="profile-card-caption">CARD HOLDER</span><strong>{holder.toUpperCase()}</strong><small>{mobile?mobile.replace(/(\+?8801\d{2})\d{5}(\d{2})/,"$1•••••$2"):"BANGLADESH MEMBER"}</small></div><div className="profile-card-pin"><span className="profile-card-caption">PIN CODE</span><strong>4821</strong></div></div>
-        <span className="profile-card-watermark">LOTTO</span>
+        <div className="profile-card-number">4582&nbsp; 7391&nbsp; 6240&nbsp; 1856</div>
+        <div className="profile-card-bottom"><div><span className="profile-card-caption">CARD HOLDER</span><strong>{holder.toUpperCase()}</strong></div><div className="profile-card-pin"><span className="profile-card-caption">PIN CODE</span><strong>4821</strong></div></div>
       </div>
     </section>
     {settingsOpen&&<div className="profile-drawer-backdrop" role="presentation" onClick={()=>setSettingsOpen(false)}>
