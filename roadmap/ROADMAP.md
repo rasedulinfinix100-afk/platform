@@ -174,3 +174,17 @@ Use this structure:
 - **Verification:** Re-fetched all seven changed files from GitHub. Confirmed AuthGate wrapper opening/closing tags match on all four protected pages. Supabase security advisor reviewed: informational finding that `auth_rate_limits` has RLS enabled with no policies (service-role-only table design); warning that leaked-password protection is disabled. GitHub Actions status for the latest commit was not yet available at the time of this entry; deployment/build verification remains pending.
 - **Commit trail:** The updates were committed to `main` as separate GitHub commits; latest commit at this checkpoint: `c9a1cf1943b0255696d046b7818592a6b1ec239d`.
 - **Remaining actions:** Confirm the GitHub Pages build/deploy for the latest commit; test Guest and Logged-in menu states, session restoration, and logout in a real browser. Implement server-enforced authorization together with actual wallet/transaction backend endpoints before enabling real money operations.
+
+
+### 2026-11-28 — Live Header/Menu verification and mandatory blocker documentation rule
+
+- **Area:** Authentication-aware Header and Menu; project tracking policy
+- **Why this task was done:** User clarified that unfinished work, demo-only behavior, and any reason work must stop or pause must always be recorded in the roadmap.
+- **Live-site evidence:** User supplied four screenshots from the published GitHub Pages site. Guest Home shows no balance; Guest Menu shows only Policies and Support. Logged-in Home shows the balance with the explicit `DEMO` label; Logged-in Menu shows Deposit, Withdrawal, Transactions, Policies, Support, Language, and Log out.
+- **User-reported runtime tests:** User independently tested Login, Logout, and page refresh and reported that all worked correctly.
+- **Verification result:** Header and Menu UX behavior is verified against the supplied production-site screenshots and the user's browser test report. This does not verify real wallet balance, token-expiry refresh under live conditions, or server-side authorization against browser tampering.
+- **Wallet status (must remain explicit):** The displayed `৳ 0.00 · DEMO` is placeholder UI only. No Wallet, Deposit, Withdrawal, or Transaction database tables have been created; no live balance source or financial-operation backend exists. Do not describe the displayed amount as real funds.
+- **Database / SQL:** No database schema change and no SQL execution occurred in this task.
+- **New mandatory roadmap rule:** Whenever work on any file, feature, service, integration, or verification is started, changed, paused, blocked, deferred, or left incomplete for any reason, record that state in `roadmap/ROADMAP.md`. The entry must identify the affected file(s)/area, what is complete, what remains incomplete, the exact reason work stopped or is blocked, any dependency/approval needed, and the next action. Do not leave partially completed work or known limitations undocumented. Update the roadmap again when the work resumes or is completed.
+- **Files changed:** Only `roadmap/ROADMAP.md`.
+- **Next action:** Continue in small approved stages. Keep wallet-related screens clearly marked as demo until a future, separately planned backend/database implementation is approved.
