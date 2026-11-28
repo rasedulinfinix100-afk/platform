@@ -30,12 +30,11 @@
 .ticket-chart-image {
   position: absolute;
   inset: 0;
+  display: block;
   width: 100%;
   height: 100%;
-  background-image: url("/platform/images/ticket-banners.avif");
-  background-repeat: no-repeat;
-  background-size: 100% 500%;
-  background-position-x: center;
+  object-fit: cover;
+  object-position: center;
 }
 
 .ticket-countdown {
@@ -98,14 +97,6 @@
   letter-spacing: 0.02em;
 }
 
-.ticket-chart-note {
-  margin: 12px 8px 0;
-  color: #8b9bb2;
-  font-size: 12px;
-  line-height: 1.5;
-  text-align: center;
-}
-
 @media (max-width: 480px) {
   .ticket-chart-list {
     gap: 7px;
@@ -137,9 +128,5 @@
 
   .ticket-countdown-unit span {
     font-size: clamp(3px, 1.15vw, 5px);
-  }
-
-  .ticket-chart-note {
-    font-size: 11px;
   }
 }
