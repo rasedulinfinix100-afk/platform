@@ -59,7 +59,7 @@ async function coordinatedRefresh(session:AuthSession):Promise<AuthSession>{
     return navigator.locks.request("lotto-auth-refresh",async()=>{
       const current=readSession();
       if(current&&current.session.refresh_token!==session.refresh_token)return current.session;
-      const next=await coordinatedRefresh(session);
+      const next=await refreshSession(session);
       const latest=readSession();
       if(latest?.user)saveSession(next,latest.user);
       return next;
@@ -101,7 +101,7 @@ export function AuthProvider({children}:{children:React.ReactNode}){
     const delay=Math.max(1000,(expiresAt-Math.floor(Date.now()/1000)-60)*1000);
     refreshTimer.current=setTimeout(async()=>{
       try{
-        const next=await refreshSession(session);
+        const next=await coordinatedRefresh(session);
         const currentUser=readSession()?.user;
         if(!currentUser){clearLocalSession();return;}
         const stored=saveSession(next,currentUser);
