@@ -69,3 +69,10 @@
 @media(max-height:720px){
   .auth-wrap{min-height:auto;padding-top:20px;padding-bottom:24px}
 }
+
+.turnstile-area{display:grid;gap:8px;min-width:0;padding:12px;border:1px solid #244b60;border-radius:13px;background:rgba(4,22,36,.72)}
+.turnstile-label{color:#a9bdca;font-size:9px;font-weight:850;letter-spacing:.14em}
+.turnstile-widget{min-height:65px;display:flex;align-items:center;justify-content:flex-start;overflow:hidden}
+.turnstile-hint{color:#7892a2;font-size:11px}
+.auth-submit:disabled{opacity:.55;cursor:not-allowed;filter:saturate(.65);box-shadow:none}
+@media(max-width:360px){.turnstile-widget{transform:scale(.88);transform-origin:left center}}
