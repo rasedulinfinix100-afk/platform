@@ -206,7 +206,7 @@ async function handleLogout(req: Request) {
   const { data, error } = await admin.auth.getUser(token);
   if (error || !data.user) return json({ error: "Invalid or expired session." }, 401);
 
-  const { error: revokeError } = await admin.auth.admin.signOut(token, "global");
+  const { error: revokeError } = await admin.auth.admin.signOut(token);
   if (revokeError) {
     console.error("Logout token revocation failed:", revokeError.message);
     return json({ error: "Could not end the session. Please try again." }, 500);
