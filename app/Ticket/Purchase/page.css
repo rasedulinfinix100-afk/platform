@@ -149,3 +149,41 @@
     padding:10px!important;
   }
 }
+
+
+/* Final checkout logo treatment: keep the existing colored payment panels;
+   place only a plain white rectangular canvas directly behind each logo. */
+.ticket-payment-card img.ticket-payment-logo{
+  display:block!important;
+  flex:0 0 auto!important;
+  width:92px!important;
+  height:64px!important;
+  min-width:92px!important;
+  min-height:64px!important;
+  max-width:92px!important;
+  max-height:64px!important;
+  padding:10px!important;
+  box-sizing:border-box!important;
+  object-fit:contain!important;
+  background-color:#fff!important;
+  border:0!important;
+  border-radius:0!important;
+  outline:0!important;
+  box-shadow:none!important;
+}
+.ticket-payment-card.bkash,
+.ticket-payment-card.bank-card{
+  justify-content:center!important;
+  align-items:center!important;
+  gap:0!important;
+}
+@media(max-width:420px){
+  .ticket-payment-card img.ticket-payment-logo{
+    width:92px!important;
+    height:64px!important;
+    min-width:92px!important;
+    min-height:64px!important;
+    max-width:92px!important;
+    max-height:64px!important;
+  }
+}
