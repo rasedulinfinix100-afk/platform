@@ -21,14 +21,14 @@
 | Area | Status | Notes |
 |---|---|---|
 | Frontend foundation and visual direction | In progress | Existing Next.js App Router structure and premium dark UI |
-| Login and registration screens | Implemented, awaiting live verification | Bangladesh mobile format; registration includes Cloudflare Turnstile |
+| Login and registration screens | Backend/API verified | Registration HTTP 201; Login HTTP 200; invalid credentials correctly rejected with HTTP 401; production UI test still pending |
 | Auth Edge Function | Active | Supabase function `auth`, deployed version 8; OTP-free mobile-to-internal-email mapping |
-| Session persistence and restoration | Implemented, awaiting end-to-end verification | AuthProvider stores and restores session, refreshes tokens, verifies `me`, and handles logout |
+| Session persistence and restoration | Implemented; browser verification pending | AuthProvider stores/restores session, refreshes tokens, verifies `me`, and handles logout; reload/refresh/logout browser tests remain open |
 | Profile table permissions | Fixed; verified | `service_role` has INSERT and SELECT on `public.profiles`; RLS remains enabled |
 | Mobile identity mapping | Implemented; verified | `profiles.mobile` is NOT NULL, Bangladesh E.164 format-constrained, and UNIQUE |
-| Login end-to-end test | Pending | Requires a valid test account and user-provided credentials |
-| Registration end-to-end test | Pending retest | Previous attempt failed at profile insert before the permission fix |
-| GitHub Pages deployment | Blocked | Latest recorded workflow failed during TypeScript checking because the Deno-only import in `supabase/functions/auth/index.ts` was included in the Next.js typecheck |
+| Login end-to-end test | Backend/API verified | Successful login confirmed in Supabase logs; GitHub Pages browser flow remains to be tested |
+| Registration end-to-end test | Backend/API verified | Successful registration confirmed after profile permission repair; GitHub Pages browser flow remains to be tested |
+| GitHub Pages deployment | Deployed successfully | Latest run `46130419587` on commit `a7ec1dd868f017462cce8eb996914410d966a696`; build and deploy jobs both succeeded. Production auth session tests remain pending. |
 | Supabase integration beyond authentication | Not started | Do not connect additional features until planned and approved |
 
 ## 3. Work history
@@ -129,3 +129,19 @@ Use this structure:
 - **Verified:** The relevant test passed and evidence is recorded.
 - **Blocked:** Work cannot proceed until a dependency or approval is resolved.
 - **Reopened:** A previously completed area needed another change; document the reason in Work history.
+
+
+### 2026-11-28 — GitHub Pages deployment verified; session tests still open
+
+- **Area:** CI/CD deployment and authentication verification status
+- **Why this task was done:** User requested completion of the remaining browser-session checks and clarification of the roadmap's completeness.
+- **GitHub Actions evidence:** Latest workflow run `46130419587` for commit `a7ec1dd868f017462cce8eb996914410d966a696` completed successfully. Both `build` and `deploy` jobs, including `Build static site` and `Deploy to GitHub Pages`, passed.
+- **Deployment result:** GitHub Pages deployment is now verified successful for that commit. This supersedes the earlier recorded build-blocked status.
+- **Session code review:** Reviewed `components/AuthProvider.tsx` and active Supabase `auth` Edge Function version 8. Code implements local session persistence/restoration, refresh-token exchange, `me` verification, backend token revocation, and local clearing on logout.
+- **Session test results:** Browser reload persistence, real token refresh, and complete logout have NOT yet been demonstrated in an interactive browser session. The previous Supabase logout log alone does not prove browser storage was cleared. Production-site equivalents also remain pending.
+- **Why not marked verified:** The assistant cannot inspect the user's actual browser localStorage or operate the user's authenticated browser session in this context. Code review and server logs are not substitutes for these runtime checks.
+- **Roadmap audit:** The roadmap records the two confirmed SQL backups and the auth Edge Function architecture/deployment, but it is not yet a complete item-by-item inventory of every SQL object, secret/configuration change, and service operation. The known backups are:
+  1. `SQL Backup - profiles service_role permissions` — notebook ID `b92a81c9-600e-40b0-9b02-0c3bfb6875b6`.
+  2. `SQL Backup - mobile identity mapping for password auth` — notebook ID `8b1a7bdf-7315-461c-829b-889fe4326276`.
+- **Supabase function state:** `auth` is ACTIVE, version 8, `verify_jwt=false`; function source and README are in `supabase/functions/auth/`.
+- **Remaining risks / next action:** Run interactive reload, refresh-token, logout and production-site tests; then add exact evidence and timestamps. Perform a separate Supabase SQL/notebook inventory to enumerate every migration, RPC/function, table, policy, grant, secret name (never secret values), and Edge Function deployment in the roadmap.
