@@ -1,6 +1,7 @@
 "use client";
 
 import "./page.css";
+import Link from "next/link";
 import {useCallback,useEffect,useState,type FormEvent,type ChangeEvent} from "react";
 import {AuthGate} from "@/components/AuthGate";
 import {useAuth} from "@/components/AuthProvider";
@@ -86,7 +87,7 @@ function ProfileContent(){
   const mobile=profile?.mobile||user.mobile||"";
   return <main className="profile-page">
     <header className="profile-topbar">
-      <a className="profile-brand" href="/" aria-label="Lotto BD home"><span className="profile-brand-mark">L</span><span>LOTTO<span>BD</span></span></a>
+      <Link className="profile-brand" href="/" aria-label="Lotto BD home"><span className="profile-brand-mark">L</span><span>LOTTO<span>BD</span></span></a>
       <div className="profile-top-actions"><span className="profile-top-label">MY ACCOUNT</span><button className={"profile-settings-trigger "+(settingsOpen?"is-open":"")} type="button" aria-label={settingsOpen?"Close settings":"Open settings"} aria-expanded={settingsOpen} onClick={()=>setSettingsOpen(v=>!v)}>{settingsOpen?<Icon name="close"/>:<Icon name="settings"/>}</button></div>
     </header>
     <section className="profile-card-stage" aria-label="Demo account card">
