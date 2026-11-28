@@ -24,10 +24,10 @@ function json(body: unknown, status = 200) {
 }
 
 function normalizeMobile(value: unknown): string | null {
-  if (typeof value !== "string" || !/^(?:\\+?880)?0?1[3-9][0-9]{8}$|^\\+8801[3-9][0-9]{8}$/.test(value)) {
+  if (typeof value !== "string" || !/^(?:\+?880)?0?1[3-9][0-9]{8}$|^\+8801[3-9][0-9]{8}$/.test(value)) {
     return null;
   }
-  const digits = value.replace(/^\\+/, "");
+  const digits = value.replace(/^\+/, "");
   if (digits.startsWith("01")) return "+88" + digits;
   if (digits.startsWith("8801")) return "+" + digits;
   if (digits.startsWith("88001")) return "+88" + digits.slice(3);
@@ -36,7 +36,7 @@ function normalizeMobile(value: unknown): string | null {
 
 function validateName(value: unknown): string | null {
   if (typeof value !== "string") return null;
-  const name = value.trim().replace(/\\s+/g, " ");
+  const name = value.trim().replace(/\s+/g, " ");
   if (name.length < 2 || name.length > 80) return null;
   if (!/^[A-Za-z][A-Za-z .'-]*$/.test(name)) return null;
   return name;
@@ -52,11 +52,11 @@ const commonPasswords = new Set([
 function validatePassword(value: unknown): string | null {
   if (typeof value !== "string") return "Password is required.";
   if (value.length < 8 || value.length > 72) return "Password must be 8–72 characters.";
-  if (!/^[\\x20-\\x7E]+$/.test(value)) return "Use English letters, numbers, and symbols only.";
+  if (!/^[\x20-\x7E]+$/.test(value)) return "Use English letters, numbers, and symbols only.";
   if ((value.match(/[A-Za-z]/g) ?? []).length < 2) return "Password must contain at least 2 English letters.";
   const normalized = value.toLowerCase().replace(/[^a-z0-9]/g, "");
   if (commonPasswords.has(normalized)) return "Choose a less common password.";
-  if (/^(.)\\1{7,}$/.test(normalized)) return "Choose a less predictable password.";
+  if (/^(.)\1{7,}$/.test(normalized)) return "Choose a less predictable password.";
   if (/^(?:0123456789|1234567890|9876543210|87654321)$/.test(normalized)) {
     return "Choose a less predictable password.";
   }
@@ -184,7 +184,7 @@ async function handleLogin(body: Record<string, unknown>, req: Request) {
 }
 
 async function handleMe(req: Request) {
-  const token = req.headers.get("authorization")?.replace(/^Bearer\\s+/i, "");
+  const token = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   if (!token) return json({ error: "Authentication required." }, 401);
   const { data, error } = await admin.auth.getUser(token);
   if (error || !data.user) return json({ error: "Invalid or expired session." }, 401);
@@ -201,7 +201,7 @@ async function handleMe(req: Request) {
 }
 
 async function handleLogout(req: Request) {
-  const token = req.headers.get("authorization")?.replace(/^Bearer\\s+/i, "");
+  const token = req.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
   if (!token) return json({ error: "Authentication required." }, 401);
   const { data, error } = await admin.auth.getUser(token);
   if (error || !data.user) return json({ error: "Invalid or expired session." }, 401);
