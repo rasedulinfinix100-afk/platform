@@ -1,7 +1,7 @@
 -- Project: platform (vdmvgafybznsdyfartfo)
 -- Purpose: Create the approved four-column public.profiles table securely.
 -- Reviewed: 2026-11-28
--- This script is intended to be applied as a Supabase migration.
+-- Applied migrations: create_profiles, restrict_profile_insert_columns
 
 -- The existing event-trigger function is used only by the ensure_rls event trigger.
 -- Remove direct API execution rights while preserving the event trigger itself.
@@ -18,32 +18,25 @@ CREATE TABLE public.profiles (
 
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
--- Authenticated users can access only their own profile.
 CREATE POLICY "Users can view own profile"
-ON public.profiles
-FOR SELECT
-TO authenticated
+ON public.profiles FOR SELECT TO authenticated
 USING ((SELECT auth.uid()) = id);
 
 CREATE POLICY "Users can insert own profile"
-ON public.profiles
-FOR INSERT
-TO authenticated
+ON public.profiles FOR INSERT TO authenticated
 WITH CHECK ((SELECT auth.uid()) = id);
 
 CREATE POLICY "Users can update own profile"
-ON public.profiles
-FOR UPDATE
-TO authenticated
+ON public.profiles FOR UPDATE TO authenticated
 USING ((SELECT auth.uid()) = id)
 WITH CHECK ((SELECT auth.uid()) = id);
 
--- Do not expose profile data to anonymous users.
+-- Authenticated users may insert only their ID and name.
 REVOKE ALL ON TABLE public.profiles FROM anon, authenticated;
-GRANT SELECT, INSERT ON TABLE public.profiles TO authenticated;
+GRANT SELECT ON TABLE public.profiles TO authenticated;
+GRANT INSERT (id, full_name) ON TABLE public.profiles TO authenticated;
 GRANT UPDATE (full_name) ON TABLE public.profiles TO authenticated;
 
--- Keep updated_at current without granting users permission to edit it.
 CREATE OR REPLACE FUNCTION public.set_profiles_updated_at()
 RETURNS TRIGGER
 LANGUAGE plpgsql
