@@ -11,7 +11,6 @@ const ticketBanners = [
   { price: 1000, prize: "৳1,00,00,000", prizePool: "এক কোটি টাকা", alt: "৳1,000 ticket — ৳1,00,00,000 prize pool", image: "/platform/images/tickets/ticket-1000.webp" },
 ] as const;
 
-const countdownUnits = ["DAYS", "HRS", "MIN", "SEC"] as const;
 
 export default function TicketChartPage() {
   return (
@@ -27,17 +26,6 @@ export default function TicketChartPage() {
                 loading={ticket.price === 10 ? "eager" : "lazy"}
                 decoding="async"
               />
-              <section className="ticket-countdown" aria-label={`Countdown for ৳${ticket.price} ticket`}>
-                <div className="ticket-countdown-heading">NEXT DRAW IN</div>
-                <div className="ticket-countdown-units">
-                  {countdownUnits.map((unit) => (
-                    <div className="ticket-countdown-unit" key={unit}>
-                      <strong>--</strong>
-                      <span>{unit}</span>
-                    </div>
-                  ))}
-                </div>
-              </section>
             </article>
           ))}
         </div>
