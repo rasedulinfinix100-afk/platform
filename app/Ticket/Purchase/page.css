@@ -126,3 +126,26 @@
 .ticket-payment-card.bkash,.ticket-payment-card.bank-card{gap:15px!important}
 .ticket-payment-card.bkash>small,.ticket-payment-card.bank-card>small,.ticket-payment-card .payment-disabled-label{display:none!important}
 @media(max-width:420px){.bkash-payment-logo{width:46px!important;height:46px!important}.mastercard-payment-logo{width:62px!important;height:42px!important}}
+
+/* bKash and card marks use identical plain white image canvases */
+.ticket-payment-logo{
+  width:70px!important;
+  height:48px!important;
+  padding:8px!important;
+  box-sizing:content-box!important;
+  display:block!important;
+  object-fit:contain!important;
+  background:#fff!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+.ticket-payment-card.bkash,
+.ticket-payment-card.bank-card{gap:0!important}
+@media(max-width:420px){
+  .ticket-payment-logo{
+    width:70px!important;
+    height:48px!important;
+    padding:8px!important;
+  }
+}
