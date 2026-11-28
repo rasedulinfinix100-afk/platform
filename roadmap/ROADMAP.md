@@ -145,3 +145,32 @@ Use this structure:
   2. `SQL Backup - mobile identity mapping for password auth` — notebook ID `8b1a7bdf-7315-461c-829b-889fe4326276`.
 - **Supabase function state:** `auth` is ACTIVE, version 8, `verify_jwt=false`; function source and README are in `supabase/functions/auth/`.
 - **Remaining risks / next action:** Run interactive reload, refresh-token, logout and production-site tests; then add exact evidence and timestamps. Perform a separate Supabase SQL/notebook inventory to enumerate every migration, RPC/function, table, policy, grant, secret name (never secret values), and Edge Function deployment in the roadmap.
+
+
+### 2026-11-28 — Header, menu visibility, and client-side account-page gate
+
+- **Area:** Authentication-aware navigation and account-page access UX
+- **Approval:** User explicitly approved updating the Header, Menu, and reviewing backend security.
+- **Files changed:**
+  - `components/AuthGate.tsx` (new)
+  - `components/SiteShell.tsx`
+  - `components/MenuDrawer.tsx`
+  - `app/Client/Wallets/Deposit/page.tsx`
+  - `app/Client/Wallets/Withdrawal/page.tsx`
+  - `app/Client/Auth/Transactions/pahe.tsx`
+  - `app/m/UserProfiles/page.tsx`
+- **What changed:**
+  - Header balance is hidden until AuthProvider finishes session restoration and confirms a logged-in user.
+  - The currently available balance remains explicitly marked **DEMO** because no wallet-balance table or live balance endpoint exists yet.
+  - Guest menu contains only Policies and Support. Guest users do not see Deposit, Withdrawal, Transactions, language controls, or Logout in the drawer.
+  - Logged-in users see the full current menu, language control, and Logout.
+  - Added a reusable client-side `AuthGate` to the Deposit, Withdrawal, Transactions, and Profile pages. It waits for session restoration and redirects guests to Login.
+- **Backend/security review:**
+  - Supabase project currently has only `public.profiles` and `public.auth_rate_limits` in the public schema. There is no wallet, deposit, withdrawal, or transaction table and no financial-operation Edge Function/API yet.
+  - Existing `auth` Edge Function (version 8) verifies user tokens for `me` and `logout`; profiles RLS policies restrict authenticated reads/updates/inserts to the caller's own profile.
+  - The current Deposit and Withdrawal pages explicitly remain demo-only and do not submit real payment or withdrawal requests.
+  - Because there is no real wallet/financial backend yet, no SQL or Edge Function authorization change was made. The new page gate is a frontend UX guard, **not a security boundary**: a user can alter browser code or navigate directly. When real wallet/payment/transaction APIs are implemented, every operation must verify the Supabase user token on the server and enforce owner-scoped RLS/authorization; never trust UI visibility or client-supplied user IDs/balances.
+- **Database changes / SQL backup:** None. No schema change was needed, so no SQL was executed and no new SQL backup notebook was created.
+- **Verification:** Re-fetched all seven changed files from GitHub. Confirmed AuthGate wrapper opening/closing tags match on all four protected pages. Supabase security advisor reviewed: informational finding that `auth_rate_limits` has RLS enabled with no policies (service-role-only table design); warning that leaked-password protection is disabled. GitHub Actions status for the latest commit was not yet available at the time of this entry; deployment/build verification remains pending.
+- **Commit trail:** The updates were committed to `main` as separate GitHub commits; latest commit at this checkpoint: `c9a1cf1943b0255696d046b7818592a6b1ec239d`.
+- **Remaining actions:** Confirm the GitHub Pages build/deploy for the latest commit; test Guest and Logged-in menu states, session restoration, and logout in a real browser. Implement server-enforced authorization together with actual wallet/transaction backend endpoints before enabling real money operations.
