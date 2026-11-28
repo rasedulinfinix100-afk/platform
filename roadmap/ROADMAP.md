@@ -212,3 +212,12 @@ Use this structure:
 - **Files changed:** Only this roadmap entry.
 - **Status:** Existing Login/Registration and session code reviewed; user-reported Login, Logout, and page-refresh tests remain accepted. Backend Login/invalid-password evidence exists. Automatic token refresh runtime test and fresh production Registration remain **Blocked pending user-assisted browser steps**. Password recovery remains **Not started**.
 - **Next steps:** (1) User performs one fresh Registration on the published site using a new mobile number and completes Turnstile; (2) keep the existing authenticated browser session open until its access token is near expiry and confirm it remains authenticated after automatic refresh, or share a screenshot of the logged-in state after the token lifetime; (3) plan a secure password-recovery method separately. Do not ask for passwords or session tokens.
+
+
+#### Follow-up verification — fresh Registration completed
+
+- **User action:** User confirmed creating a new account on 2026-11-28.
+- **Supabase Auth audit:** A new `user_signedup` event was recorded at `2026-11-28T10:06:58Z` with the email auth provider (the app's internal mobile-derived identity mapping).
+- **Backend sequence:** Auth Admin user creation returned HTTP 200; profile insert returned HTTP 201; password token grant returned HTTP 200. Rate-limit RPC returned HTTP 200.
+- **Result:** Fresh account creation and profile creation are **verified successful** from Supabase production logs. No phone number, email identity, or user ID is copied into this roadmap.
+- **Token refresh:** Still pending. The newly created account's browser session should remain signed in and the user should keep the site tab open until the access-token refresh window; do not log out or clear site data before the next check.
