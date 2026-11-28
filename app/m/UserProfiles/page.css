@@ -128,3 +128,35 @@
 .profile-drawer .profile-settings-nav button strong{font-size:14px}
 .profile-drawer .profile-settings-nav button small{font-size:11px}
 .profile-drawer .profile-settings-nav button>svg:last-child{width:22px;height:22px}
+
+/* Typography aligned with app/globals.css site scale */
+.profile-page{font-size:12px;letter-spacing:-.012em}
+.profile-topbar{height:64px}
+.profile-brand>span:last-child{font-size:20px;font-weight:850;letter-spacing:-.06em}
+.profile-settings-trigger svg{width:25px;height:25px;stroke-width:1.8}
+.profile-card-caption{font-size:8px;letter-spacing:.12em}
+.profile-card-number{font-size:clamp(17px,4.7vw,22px);letter-spacing:.07em}
+.profile-card-bottom strong{font-size:11.2px;letter-spacing:.02em}
+.profile-card-pin strong{font-size:13.6px;letter-spacing:.12em}
+.profile-drawer-heading h2{font-size:20px;line-height:1.2;letter-spacing:-.045em}
+.profile-drawer .profile-settings-nav button{min-height:64px;gap:13px;padding:12px 5px}
+.profile-drawer .profile-settings-nav button>svg:first-child{width:21px;height:21px}
+.profile-drawer .profile-settings-nav button>svg:last-child{width:20px;height:20px}
+.profile-drawer .profile-settings-nav button strong{font-size:12.8px;font-weight:750;letter-spacing:-.012em}
+.profile-drawer .profile-settings-nav button span{display:block}
+.profile-fullscreen-header h2{font-size:15.2px;line-height:1.25;letter-spacing:-.035em}
+.profile-back-button{font-size:10.4px}
+.profile-fullscreen-body .profile-info-section{padding:14px}
+.profile-fullscreen-body .profile-info-section h3{font-size:13.6px;line-height:1.3}
+.profile-fullscreen-body .profile-detail{font-size:11.2px;padding:11px 0}
+.profile-fullscreen-body .profile-form label,.profile-fullscreen-body .profile-upload-label{font-size:11.2px}
+.profile-fullscreen-body .profile-form input,.profile-fullscreen-body .profile-file{min-height:42px;font-size:11.2px}
+.profile-fullscreen-body .profile-form button,.profile-fullscreen-body .profile-primary{min-height:42px;font-size:10.4px}
+.profile-hint,.profile-muted{font-size:8.8px;line-height:1.5}
+.profile-eyebrow,.profile-kicker{font-size:8px;letter-spacing:.12em}
+.profile-success,.profile-error{font-size:9.6px}
+@media(max-width:480px){
+ .profile-drawer-heading h2{font-size:20px}
+ .profile-drawer .profile-settings-nav button{min-height:61px}
+ .profile-drawer .profile-settings-nav button strong{font-size:12.8px}
+}
