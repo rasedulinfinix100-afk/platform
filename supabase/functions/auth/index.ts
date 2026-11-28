@@ -69,12 +69,43 @@ async function sha256(value: string): Promise<string> {
   return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-function clientIp(req: Request): string {
-  const forwarded = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  return req.headers.get("cf-connecting-ip") ??
-    req.headers.get("x-real-ip") ??
-    forwarded ??
-    "unknown";
+function clientIp(req: Request): string | null {
+  // Only trust Cloudflare's edge-provided address; do not trust client-supplied forwarding headers.
+  const value = req.headers.get("cf-connecting-ip")?.trim() ?? "";
+  if (!value || value.length > 45) return null;
+  if (/^(?:\\d{1,3}\\.){3}\\d{1,3}$/.test(value) || /^[0-9a-fA-F:]+$/.test(value)) return value;
+  return null;
+}
+
+function browserName(userAgent: string): string | null {
+  if (!userAgent) return null;
+  if (/Edg\\//i.test(userAgent)) return "Microsoft Edge";
+  if (/OPR\\//i.test(userAgent)) return "Opera";
+  if (/Firefox\\//i.test(userAgent)) return "Firefox";
+  if (/Chrome\\//i.test(userAgent) && !/Chromium\\//i.test(userAgent)) return "Chrome";
+  if (/Safari\\//i.test(userAgent) && !/Chrome\\//i.test(userAgent)) return "Safari";
+  return "Other";
+}
+
+function deviceModel(userAgent: string): string | null {
+  if (/iPhone/i.test(userAgent)) return "iPhone";
+  if (/iPad/i.test(userAgent)) return "iPad";
+  const android = userAgent.match(/Android[^;)]*;\\s*([^;)]+?)(?:\\s+Build|[;)])/i);
+  if (android?.[1]) return android[1].trim().slice(0, 120) || "Android device";
+  if (/Android/i.test(userAgent)) return "Android device";
+  if (/Windows|Macintosh|Mac OS X|Linux/i.test(userAgent)) return "Desktop";
+  return null;
+}
+
+async function saveLoginMetadata(userId: string, req: Request) {
+  const userAgent = (req.headers.get("user-agent") ?? "").slice(0, 1000);
+  const { error } = await admin.from("profiles").update({
+    last_login_at: new Date().toISOString(),
+    last_login_ip: clientIp(req),
+    last_login_browser: browserName(userAgent),
+    last_login_device_model: deviceModel(userAgent),
+  }).eq("id", userId);
+  if (error) console.error("Could not save login metadata:", error.message);
 }
 
 async function allowRateLimit(key: string, maxRequests: number, windowSeconds: number): Promise<boolean> {
@@ -188,6 +219,8 @@ async function handleRegister(body: Record<string, unknown>, req: Request) {
     return json({ error: "Account could not start a session. Please contact support." }, 503);
   }
 
+  await saveLoginMetadata(userId, req);
+
   return json({
     message: "Account created successfully.",
     user: { id: userId, fullName, mobile: phone },
@@ -218,6 +251,8 @@ async function handleLogin(body: Record<string, unknown>, req: Request) {
   if (error || !data.session || !data.user) {
     return json({ error: "Invalid mobile number or password." }, 401);
   }
+
+  await saveLoginMetadata(data.user.id, req);
 
   const { data: profile } = await admin.from("profiles")
     .select("full_name, mobile")
