@@ -188,3 +188,27 @@ Use this structure:
 - **New mandatory roadmap rule:** Whenever work on any file, feature, service, integration, or verification is started, changed, paused, blocked, deferred, or left incomplete for any reason, record that state in `roadmap/ROADMAP.md`. The entry must identify the affected file(s)/area, what is complete, what remains incomplete, the exact reason work stopped or is blocked, any dependency/approval needed, and the next action. Do not leave partially completed work or known limitations undocumented. Update the roadmap again when the work resumes or is completed.
 - **Files changed:** Only `roadmap/ROADMAP.md`.
 - **Next action:** Continue in small approved stages. Keep wallet-related screens clearly marked as demo until a future, separately planned backend/database implementation is approved.
+
+
+### 2026-11-28 — Remaining authentication verification review
+
+- **Area:** Login, Registration, session restoration, token refresh, and recovery readiness
+- **Why this task was done:** User explicitly asked to complete the remaining authentication tests.
+- **Files/services reviewed (read-only):**
+  - `components/AuthProvider.tsx`
+  - `app/Client/Auth/Login/page.tsx`
+  - `app/Client/Auth/Register/page.tsx`
+  - Supabase Edge Function `auth`, active version 8
+- **Code review findings:**
+  - Login uses the published Supabase Auth Edge Function and establishes a returned access/refresh-token session.
+  - Registration requires Cloudflare Turnstile, validates matching passwords, calls the Edge Function, and establishes the returned session.
+  - Session restoration checks expiry, refreshes near-expiry tokens, calls backend `me`, and schedules future refresh.
+  - The auth Edge Function is ACTIVE version 8 and supports `register`, `login`, `me`, and `logout`. No password-reset/recovery action is implemented in this function.
+- **Log evidence reviewed:** Supabase Auth logs contain successful password-grant Login events and a successful logout event. Recent Edge Function requests include successful authenticated `me` calls. Prior logs also show invalid credentials rejected. These logs prove backend requests occurred, but some referers are `http://localhost:3000`; they do not independently prove a fresh end-to-end Registration from the current GitHub Pages production URL.
+- **Token refresh test:** Not conclusively verified. The available logs reviewed did not provide a clear refresh-token grant event correlated to the current published browser session. The assistant cannot read the user's browser storage/session token or force the user's live browser session to expire without user participation. Do not mark automatic refresh as runtime-verified yet.
+- **Fresh Production Registration test:** Still pending. A genuine test requires the user to submit the published Registration form with a fresh unused Bangladesh mobile number, password, and live Turnstile challenge. Do not create a new account or consume a phone number without the user's participation.
+- **Password recovery:** Not implemented; this is a missing feature/design task, not a failed test. Because the account uses a non-deliverable internal `.invalid` email identity and no OTP/SMS, recovery needs a separately approved identity-verification design before implementation.
+- **Database / SQL:** No database changes and no SQL executed. No SQL backup was required.
+- **Files changed:** Only this roadmap entry.
+- **Status:** Existing Login/Registration and session code reviewed; user-reported Login, Logout, and page-refresh tests remain accepted. Backend Login/invalid-password evidence exists. Automatic token refresh runtime test and fresh production Registration remain **Blocked pending user-assisted browser steps**. Password recovery remains **Not started**.
+- **Next steps:** (1) User performs one fresh Registration on the published site using a new mobile number and completes Turnstile; (2) keep the existing authenticated browser session open until its access token is near expiry and confirm it remains authenticated after automatic refresh, or share a screenshot of the logged-in state after the token lifetime; (3) plan a secure password-recovery method separately. Do not ask for passwords or session tokens.
