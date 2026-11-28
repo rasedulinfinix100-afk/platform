@@ -13,7 +13,7 @@ const MAX_NID_BYTES=409600;
 const SESSION_KEY="lotto-auth-session";
 type ProfileData={full_name:string|null;mobile:string|null;email:string|null;email_verified:boolean;avatar_url:string|null;account_status:string;last_login_at:string|null;last_login_browser:string|null;last_login_device_model:string|null};
 type VerificationData={id:string;status:string;submitted_at:string;rejection_reason:string|null};
-type Section="account"|"verification"|"login";
+type Section="account"|"verification"|"login"|null;
 
 function getAccessToken():string|null{
   try{const raw=localStorage.getItem(SESSION_KEY);const parsed=raw?JSON.parse(raw):null;return parsed?.session?.access_token??null;}catch{return null;}
@@ -46,7 +46,7 @@ function ProfileContent(){
   const [saving,setSaving]=useState(false);
   const [uploading,setUploading]=useState(false);
   const [settingsOpen,setSettingsOpen]=useState(false);
-  const [section,setSection]=useState<Section>("account");
+  const [section,setSection]=useState<Section>(null);
   useEffect(()=>{setToken(getAccessToken());},[isReady,user?.id]);
   const load=useCallback(async()=>{
     if(!token||!user?.id)return;
@@ -88,36 +88,35 @@ function ProfileContent(){
   return <main className="profile-page">
     <header className="profile-topbar">
       <Link className="profile-brand" href="/" aria-label="Lotto BD home"><span className="profile-brand-mark">L</span><span>LOTTO<span>BD</span></span></Link>
-      <div className="profile-top-actions"><span className="profile-top-label">MY ACCOUNT</span><button className={"profile-settings-trigger "+(settingsOpen?"is-open":"")} type="button" aria-label={settingsOpen?"Close settings":"Open settings"} aria-expanded={settingsOpen} onClick={()=>setSettingsOpen(v=>!v)}>{settingsOpen?<Icon name="close"/>:<Icon name="settings"/>}</button></div>
+      <button className="profile-settings-trigger" type="button" aria-label="Open settings" aria-expanded={settingsOpen} onClick={()=>setSettingsOpen(true)}><Icon name="settings"/></button>
     </header>
     <section className="profile-card-stage" aria-label="Demo account card">
       <div className="profile-account-card">
         <div className="profile-card-shine"/>
-        <div className="profile-card-top"><span className="profile-card-brand">LOTTO BD</span><span className="profile-card-chip"><Icon name="chip"/></span></div>
-        <div className="profile-card-number">4582&nbsp; 7391&nbsp; 6240&nbsp; 1856</div>
+        <div className="profile-card-top"><span className="profile-card-chip"><Icon name="chip"/></span></div>
         <div className="profile-card-bottom"><div><span className="profile-card-caption">CARD HOLDER</span><strong>{holder.toUpperCase()}</strong><small>{mobile?mobile.replace(/(\+?8801\d{2})\d{5}(\d{2})/,"$1•••••$2"):"BANGLADESH MEMBER"}</small></div><div className="profile-card-pin"><span className="profile-card-caption">PIN CODE</span><strong>4821</strong></div></div>
         <span className="profile-card-watermark">LOTTO</span>
       </div>
-      <p className="profile-demo-note">DEMO ACCOUNT CARD · NOT A PAYMENT CARD</p>
     </section>
-    <section className="profile-shortcut" aria-label="Account shortcut">
-      <div className="profile-shortcut-icon"><Icon name="user"/></div><div className="profile-shortcut-copy"><strong>{holder}</strong><span>{mobile||"Your Lotto BD account"}</span></div><span className="profile-member-pill">{profile?.account_status??"MEMBER"}</span>
-    </section>
-    <button className="profile-open-settings" type="button" onClick={()=>setSettingsOpen(true)}><Icon name="settings"/> ACCOUNT SETTINGS <Icon name="chevron"/></button>
-    {settingsOpen&&<div className="profile-settings-overlay" role="presentation" onClick={()=>setSettingsOpen(false)}>
-      <section className="profile-settings-panel" role="dialog" aria-modal="true" aria-labelledby="profile-settings-title" onClick={e=>e.stopPropagation()}>
-        <div className="profile-settings-heading"><div><span className="profile-eyebrow">LOTTO BD · SETTINGS</span><h2 id="profile-settings-title">Account Settings</h2></div><button type="button" className="profile-settings-close" aria-label="Close settings" onClick={()=>setSettingsOpen(false)}><Icon name="close"/></button></div>
+    {settingsOpen&&<div className="profile-drawer-backdrop" role="presentation" onClick={()=>setSettingsOpen(false)}>
+      <aside className="profile-drawer" role="dialog" aria-modal="true" aria-labelledby="profile-drawer-title" onClick={e=>e.stopPropagation()}>
+        <div className="profile-drawer-heading"><div><span className="profile-eyebrow">LOTTO BD</span><h2 id="profile-drawer-title">Settings</h2></div><button type="button" className="profile-settings-close" aria-label="Close settings" onClick={()=>setSettingsOpen(false)}><Icon name="close"/></button></div>
         <nav className="profile-settings-nav" aria-label="Profile sections">
-          <button type="button" className={section==="account"?"active":""} onClick={()=>{setSection("account");setMessage("");setError("");}}><Icon name="user"/><span><strong>Account Info</strong><small>Personal details and contact email</small></span><Icon name="chevron"/></button>
-          <button type="button" className={section==="verification"?"active":""} onClick={()=>{setSection("verification");setMessage("");setError("");}}><Icon name="shield"/><span><strong>Verification</strong><small>Identity information and NID</small></span><Icon name="chevron"/></button>
-          <button type="button" className={section==="login"?"active":""} onClick={()=>{setSection("login");setMessage("");setError("");}}><Icon name="clock"/><span><strong>Last Login</strong><small>Recent sign-in information</small></span><Icon name="chevron"/></button>
+          <button type="button" onClick={()=>{setSection("account");setSettingsOpen(false);setMessage("");setError("");}}><Icon name="user"/><span><strong>Account Info</strong><small>Personal details and contact email</small></span><Icon name="chevron"/></button>
+          <button type="button" onClick={()=>{setSection("verification");setSettingsOpen(false);setMessage("");setError("");}}><Icon name="shield"/><span><strong>Verification</strong><small>Identity information and NID</small></span><Icon name="chevron"/></button>
+          <button type="button" onClick={()=>{setSection("login");setSettingsOpen(false);setMessage("");setError("");}}><Icon name="clock"/><span><strong>Last Login</strong><small>Recent sign-in information</small></span><Icon name="chevron"/></button>
         </nav>
-        <div className="profile-settings-content">
+      </aside>
+    </div>}
+    {section&&<div className="profile-fullscreen-modal" role="presentation">
+      <section className="profile-fullscreen-content" role="dialog" aria-modal="true" aria-labelledby="profile-section-title">
+        <header className="profile-fullscreen-header"><button type="button" className="profile-back-button" onClick={()=>{setSection(null);setSettingsOpen(true);}}>‹ Settings</button><h2 id="profile-section-title">{section==="account"?"Account Info":section==="verification"?"Verification":"Last Login"}</h2><button type="button" className="profile-settings-close" aria-label="Close section" onClick={()=>setSection(null)}><Icon name="close"/></button></header>
+        <div className="profile-fullscreen-body">
           {section==="account"&&<section className="profile-info-section"><span className="profile-kicker">PERSONAL INFORMATION</span><h3>Account details</h3><div className="profile-detail"><span>Full name</span><strong>{holder}</strong></div><div className="profile-detail"><span>Mobile number</span><strong>{mobile||"—"}</strong></div><div className="profile-detail"><span>Account status</span><strong>{profile?.account_status??"—"}</strong></div><form onSubmit={saveProfile} className="profile-form"><label htmlFor="contact-email">Contact email <small>Optional</small></label><input id="contact-email" type="email" maxLength={254} value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com"/><p className="profile-hint">This is a contact email, not your login ID. Email verification is not enabled yet.</p><button type="submit" disabled={saving}>{saving?"Saving…":"Save email"}</button></form></section>}
           {section==="verification"&&<section className="profile-info-section"><span className="profile-kicker">IDENTITY CHECK</span><h3>NID verification</h3><div className="profile-verification-badge">{verification?.status??"Not submitted"}</div>{verification?<div className="profile-verification-state"><p>Submitted {new Date(verification.submitted_at).toLocaleString()}</p>{verification.rejection_reason&&<p className="profile-error">{verification.rejection_reason}</p>}{verification.status==="pending"&&<p>Your document is waiting for an administrator review.</p>}</div>:<p className="profile-hint">Upload a clear photo or PDF of your Bangladesh NID. The document is stored privately and can only be accessed by you and authorized administrators.</p>}{(!verification||verification.status==="rejected"||verification.status==="needs_resubmission")&&<><label className="profile-upload-label" htmlFor="nid-file">Choose NID file</label><input id="nid-file" className="profile-file" type="file" accept="image/jpeg,image/png,application/pdf,.jpg,.jpeg,.png,.pdf" onChange={chooseFile}/><p className="profile-hint">JPG, PNG, or PDF · Maximum 400 KB</p>{file&&<p className="profile-file-name">{file.name} · {(file.size/1024).toFixed(1)} KB</p>}<button className="profile-primary" type="button" disabled={!file||uploading} onClick={()=>void submitNid()}>{uploading?"Uploading securely…":"Submit for verification"}</button></>}</section>}
           {section==="login"&&<section className="profile-info-section"><span className="profile-kicker">SECURITY INFORMATION</span><h3>Last login</h3><div className="profile-detail"><span>Time</span><strong>{profile?.last_login_at?new Date(profile.last_login_at).toLocaleString():"Not available"}</strong></div><div className="profile-detail"><span>Browser</span><strong>{profile?.last_login_browser??"Not available"}</strong></div><div className="profile-detail"><span>Device</span><strong>{profile?.last_login_device_model??"Not available"}</strong></div><p className="profile-hint">IP address is retained for security review and is not displayed here.</p></section>}
+          {message&&<p className="profile-success" role="status">{message}</p>}{error&&<p className="profile-error" role="alert">{error}</p>}
         </div>
-        {message&&<p className="profile-success" role="status">{message}</p>}{error&&<p className="profile-error" role="alert">{error}</p>}
       </section>
     </div>}
   </main>;
