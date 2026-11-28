@@ -50,6 +50,23 @@ async function authRequest(action:string,accessToken?:string){
   if(!response.ok)throw new Error(typeof result.error==="string"?result.error:"Authentication request failed.");
   return result;
 }
+function isInvalidSessionError(error:unknown){
+  const message=error instanceof Error?error.message:String(error??"");
+  return /invalid.*refresh|refresh.*(expired|not found|invalid)|session.*(expired|invalid)|invalid token/i.test(message);
+}
+async function coordinatedRefresh(session:AuthSession):Promise<AuthSession>{
+  if(typeof navigator!=="undefined"&&navigator.locks){
+    return navigator.locks.request("lotto-auth-refresh",async()=>{
+      const current=readSession();
+      if(current&&current.session.refresh_token!==session.refresh_token)return current.session;
+      const next=await coordinatedRefresh(session);
+      const latest=readSession();
+      if(latest?.user)saveSession(next,latest.user);
+      return next;
+    });
+  }
+  return refreshSession(session);
+}
 async function refreshSession(session:AuthSession):Promise<AuthSession>{
   const response=await fetch(SUPABASE_URL+"/auth/v1/token?grant_type=refresh_token",{
     method:"POST",
@@ -91,8 +108,9 @@ export function AuthProvider({children}:{children:React.ReactNode}){
         sessionRef.current=stored.session;
         setUser(stored.user);
         scheduleRefresh(stored.session);
-      }catch{
-        clearLocalSession();
+      }catch(error){
+        if(isInvalidSessionError(error)){clearLocalSession();return;}
+        refreshTimer.current=setTimeout(()=>scheduleRefresh(session),60000);
       }
     },Math.min(delay,2147483000));
   },[clearLocalSession]);
@@ -112,7 +130,7 @@ export function AuthProvider({children}:{children:React.ReactNode}){
       try{
         let session=stored.session;
         if((session.expires_at??0)*1000<Date.now()+60000){
-          session=await refreshSession(session);
+          session=await coordinatedRefresh(session);
         }
         const result=await authRequest("me",session.access_token);
         if(!result.user?.id)throw new Error("Unable to verify session.");
@@ -127,8 +145,11 @@ export function AuthProvider({children}:{children:React.ReactNode}){
           setUser(next.user);
           scheduleRefresh(next.session);
         }
-      }catch{
-        if(active)clearLocalSession();
+      }catch(error){
+        if(active){
+          if(isInvalidSessionError(error))clearLocalSession();
+          else{sessionRef.current=stored.session;setUser(stored.user);scheduleRefresh(stored.session);}
+        }
       }finally{if(active)setReady(true);}
     }
     void restore();
