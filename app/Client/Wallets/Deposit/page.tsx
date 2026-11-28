@@ -2,6 +2,7 @@
 import {useEffect,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {SiteShell} from "@/components/SiteShell";
+import {AuthGate} from "@/components/AuthGate";
 import {PremiumIcon} from "@/components/PremiumIcon";
 import {cryptoDepositConfig,depositChannels,depositMethods,fiatPaymentAccounts} from "@/lib/demo-config";
 import "./deposit.css";
@@ -35,7 +36,7 @@ export default function DepositPage(){
  useEffect(()=>{if(verification==="idle")return;const duration=verification==="checking"?2100:1900;const timer=window.setTimeout(()=>{if(verification==="checking")setVerification("success");else{setVerification("idle");setModal(true)}},duration);return()=>window.clearTimeout(timer)},[verification]);
  function confirmDeposit(){setProcessing(true)}
  function updateTransactionId(value:string){setTransactionId(value.toUpperCase().replace(/[^A-Z0-9]/g,""))}
- return <SiteShell>
+ return <AuthGate><SiteShell>
   <section className="deposit-mode-switch" role="group" aria-label="Deposit type">
    <button type="button" className={mode==="fiat"?"deposit-mode-tab active":"deposit-mode-tab"} onClick={()=>changeMode("fiat")} aria-pressed={mode==="fiat"}>Fiat</button>
    <button type="button" className={mode==="crypto"?"deposit-mode-tab active":"deposit-mode-tab"} onClick={()=>changeMode("crypto")} aria-pressed={mode==="crypto"}>Crypto</button>
