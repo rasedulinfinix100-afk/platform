@@ -127,7 +127,7 @@ function ProfileContent(){
       await load();
     }catch(e){
       if(uploaded){
-        try{await api("/storage/v1/object/"+BUCKET,token,{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({prefix:objectPath})});}catch{/* Orphan cleanup can be handled by an administrator. */}
+        try{await api("/storage/v1/object/"+BUCKET,token,{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({prefixes:[objectPath]})});}catch{/* Orphan cleanup can be handled by an administrator. */}
       }
       setError(e instanceof Error?e.message:"NID upload failed. Please try again.");
     }finally{setUploading(false);}
